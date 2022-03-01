@@ -214,7 +214,7 @@ Transform:
   m_GameObject: {fileID: 231425103}
   m_LocalRotation: {x: 0, y: 0.9999978, z: 0, w: -0.002109689}
   m_LocalPosition: {x: 0, y: 1.1700001, z: 0}
-  m_LocalScale: {x: 1.4121017, y: 1.4939, z: 1}
+  m_LocalScale: {x: 3, y: 1.4939, z: 1}
   m_Children:
   - {fileID: 1457665608}
   - {fileID: 1759599119}
@@ -408,7 +408,7 @@ Transform:
   m_GameObject: {fileID: 855896221}
   m_LocalRotation: {x: 0, y: 0.9999978, z: 0, w: -0.002109689}
   m_LocalPosition: {x: 0, y: 1.1700001, z: 0}
-  m_LocalScale: {x: 1.4121017, y: 1.4939, z: 1}
+  m_LocalScale: {x: 3, y: 1.4939, z: 1}
   m_Children:
   - {fileID: 1198481997}
   - {fileID: 1620961502}
@@ -710,6 +710,7 @@ GameObject:
   - component: {fileID: 1309136792}
   - component: {fileID: 1309136791}
   - component: {fileID: 1309136795}
+  - component: {fileID: 1309136796}
   m_Layer: 0
   m_Name: LightCube
   m_TagString: hasInfo
@@ -807,6 +808,20 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   LightInfo: {fileID: 1555265598}
+--- !u!114 &1309136796
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1309136790}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 6610173a95f0c7848a6a8284d495ef26, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  http: {fileID: 1904478375}
+  text: {fileID: 1759599120}
 --- !u!1 &1457665607
 GameObject:
   m_ObjectHideFlags: 0
@@ -946,6 +961,53 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 55f1e248391401a4bad268671aa87998, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+--- !u!1 &1595238814
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1595238816}
+  - component: {fileID: 1595238815}
+  m_Layer: 0
+  m_Name: LineDrawer
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &1595238815
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1595238814}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a26b71c672da1aa46b69910975d242aa, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  linePrefab: {fileID: 89093800722434390, guid: a3e366f57bb456a4796ab08458c3d27f, type: 3}
+  linkPrefab: {fileID: 5809940096746961129, guid: 994fa395d2c4bd34ebe9c28ee33d6537, type: 3}
+  obj1: {fileID: 1309136790}
+  obj2: {fileID: 1956792371}
+--- !u!4 &1595238816
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1595238814}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 3.4421608, y: 2.4888446, z: -6.685569}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_RootOrder: 6
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1620961501
 GameObject:
   m_ObjectHideFlags: 0
@@ -1346,6 +1408,7 @@ GameObject:
   - component: {fileID: 1956792374}
   - component: {fileID: 1956792373}
   - component: {fileID: 1956792372}
+  - component: {fileID: 1956792377}
   m_Layer: 0
   m_Name: SensorCube
   m_TagString: hasInfo
@@ -1443,6 +1506,20 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 5
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &1956792377
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1956792371}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 29386b6af0ec4cd4a86504df53e53d09, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  http: {fileID: 1904478375}
+  text: {fileID: 1620961503}
 --- !u!1 &2088174178
 GameObject:
   m_ObjectHideFlags: 0
