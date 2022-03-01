@@ -5,18 +5,22 @@ using UnityEngine;
 public class GazeBehaviour : MonoBehaviour
 {
     List<LightInformationBehaviour> infos = new List<LightInformationBehaviour>();
+    int ignoreMask = 1 << 6;
+
     // Start is called before the first frame update
     void Start()
     {
-        infos = FindObjectsOfType<LightInformationBehaviour>().ToList();
+        
     }
 
     // Update is called once per frame
-    void FixedUpdate()
+    void Update()
     {
+        infos = FindObjectsOfType<LightInformationBehaviour>().ToList();
+        RaycastHit[] hits = Physics.RaycastAll(origin: transform.position, direction: transform.forward, int.MaxValue, ~ignoreMask);
 
-        RaycastHit[] hits = Physics.RaycastAll(transform.position, transform.forward);
-
+        Debug.Log(hits.Length);
+        
         if (hits.Length == 0)
         {
             closeAll();
@@ -25,6 +29,7 @@ public class GazeBehaviour : MonoBehaviour
         foreach (RaycastHit hit in hits)
         {
             GameObject go = hit.collider.gameObject;
+            Debug.Log(go.name);
 
             if (go.CompareTag("hasInfo"))
             {
