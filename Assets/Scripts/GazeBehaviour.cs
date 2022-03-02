@@ -19,8 +19,6 @@ public class GazeBehaviour : MonoBehaviour
         infos = FindObjectsOfType<LightInformationBehaviour>().ToList();
         RaycastHit[] hits = Physics.RaycastAll(origin: transform.position, direction: transform.forward, int.MaxValue, ~ignoreMask);
 
-        Debug.Log(hits.Length);
-        
         if (hits.Length == 0)
         {
             closeAll();
@@ -29,7 +27,6 @@ public class GazeBehaviour : MonoBehaviour
         foreach (RaycastHit hit in hits)
         {
             GameObject go = hit.collider.gameObject;
-            Debug.Log(go.name);
 
             if (go.CompareTag("hasInfo"))
             {
