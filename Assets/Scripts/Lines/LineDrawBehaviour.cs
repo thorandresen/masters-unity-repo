@@ -13,17 +13,17 @@ public class LineDrawBehaviour : MonoBehaviour
 
     GameObject localLink;
 
-    // TEST OBJECTS
-    [SerializeField]
-    GameObject obj1;
+    //// TEST OBJECTS
+    //[SerializeField]
+    //GameObject obj1;
 
-    [SerializeField]
-    GameObject obj2;
+    //[SerializeField]
+    //GameObject obj2;
 
     // Start is called before the first frame update
     void Start()
     {
-        DrawLine(obj1, obj2);
+        //DrawLine(obj1, obj2);
     }
 
     // Update is called once per frame
