@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class PlayerBehaviour : MonoBehaviour
 {
@@ -22,6 +23,9 @@ public class PlayerBehaviour : MonoBehaviour
     [SerializeField]
     GameObject lineDrawer;
 
+    [SerializeField]
+    Image loadingImage;
+
     // Start is called before the first frame update
     void Start()
     {
@@ -31,11 +35,16 @@ public class PlayerBehaviour : MonoBehaviour
     // Update is called once per frame
     void FixedUpdate()
     {
-        HandleGazeSelection();
-        HandleCommentBlock();
+        bool w = HandleGazeSelection();
+        bool s = HandleCommentBlock();
+
+        if(!w && !s)
+        {
+            loadingImage.fillAmount = 0f;
+        }
     }
 
-    private void HandleGazeSelection()
+    private bool HandleGazeSelection()
     {
         RaycastHit hit;
 
@@ -43,11 +52,12 @@ public class PlayerBehaviour : MonoBehaviour
         {
             GameObject go = hit.collider.gameObject;
 
-            if (!go.CompareTag("hasInfo") || gameObjects.Contains(go))
+            if (!go.CompareTag("hasInfo") || gameObjects.Contains(go) || go.name.Contains("LinkPrefab"))
             {
                 // Stop timers, reset lasthit
                 timer = 2f;
                 lastHit = new RaycastHit();
+                loadingImage.fillAmount = 0f;
             }
             else if (lastHit.collider == null || hit.collider.gameObject != lastHit.collider.gameObject)
             {
@@ -57,10 +67,12 @@ public class PlayerBehaviour : MonoBehaviour
             else if (timer > 0f)
             {
                 timer -= Time.deltaTime;
+                loadingImage.fillAmount = map(timer, 2f, 0f, 0f, 1f);
             }
             else
             {
                 Debug.Log("ADDED TARGET TO LIST");
+                loadingImage.fillAmount = 0f;
                 gameObjects.Add(go);
                 timer = 2f;
 
@@ -69,17 +81,22 @@ public class PlayerBehaviour : MonoBehaviour
                     lineDrawer.GetComponent<LineDrawBehaviour>().DrawLine(gameObjects[0], gameObjects[1]);
                 }
             }
+            return true;
         }
+        timer = 2f;
+        return false;
     }
 
-    private void HandleCommentBlock()
+    private bool HandleCommentBlock()
     {
         RaycastHit hit;
+
+        if (showGUI)
+            return false;
 
         if (Physics.Raycast(transform.position, transform.forward, out hit, int.MaxValue, ~ignoreDefault))
         {
             GameObject go = hit.collider.gameObject;
-            Debug.Log(go.name);
 
             if (!go.CompareTag("isCommentable") || gameObjects.Contains(go))
             {
@@ -90,7 +107,6 @@ public class PlayerBehaviour : MonoBehaviour
             else if (lastHitComment.collider == null || hit.collider.gameObject != lastHitComment.collider.gameObject)
             {
                 // Start timer with new object
-                Debug.Log("STARTED COMMENT TIMER");
                 lastHitComment = hit;
             }
             else if (timerComment > 0f)
@@ -99,14 +115,14 @@ public class PlayerBehaviour : MonoBehaviour
             }
             else
             {
-                Debug.Log("FINISHED COMMEN TIMER");
                 // Open GUI box and assign what is written to the text derived from here.
                 commentTextMesh = go.GetComponentInChildren<TextMeshPro>();
                 showGUI = true;
-                
                 timerComment = 2f;
             }
+            return true;
         }
+        return false;
     }
 
     private void OnGUI()
@@ -115,6 +131,23 @@ public class PlayerBehaviour : MonoBehaviour
         {
             commentText = GUI.TextField(new Rect(10, 10, 300, 200), commentText);
             commentTextMesh.text = commentText;
+
+            if (GUI.Button(new Rect(310, 10, 50, 30), "(Y)"))
+                showGUI = false;
+
+            if (GUI.Button(new Rect(310, 40, 50, 30), "(N)"))
+            {
+                commentTextMesh.text = "";
+                commentText = "";
+                showGUI = false;
+            }
+                
+
         }
+    }
+
+    private float map(float x, float in_min, float in_max, float out_min, float out_max)
+    {
+        return (x - in_min) * (out_max - out_min) / (in_max - in_min) + out_min;
     }
 }
