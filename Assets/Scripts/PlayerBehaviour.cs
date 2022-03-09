@@ -20,11 +20,17 @@ public class PlayerBehaviour : MonoBehaviour
     float timerComment = 2f;
     List<GameObject> gameObjects = new List<GameObject>();
 
+    string json;
+    bool test = false;
+
     [SerializeField]
     GameObject lineDrawer;
 
     [SerializeField]
     Image loadingImage;
+
+    [SerializeField]
+    HttpBehaviour _http;
 
     // Start is called before the first frame update
     void Start()
@@ -51,13 +57,13 @@ public class PlayerBehaviour : MonoBehaviour
         if (Physics.Raycast(transform.position, transform.forward, out hit, int.MaxValue, ~ignoreMask))
         {
             GameObject go = hit.collider.gameObject;
-
+            
             if (!go.CompareTag("hasInfo") || gameObjects.Contains(go) || go.name.Contains("LinkPrefab"))
             {
                 // Stop timers, reset lasthit
                 timer = 2f;
                 lastHit = new RaycastHit();
-                loadingImage.fillAmount = 0f;
+                return false;
             }
             else if (lastHit.collider == null || hit.collider.gameObject != lastHit.collider.gameObject)
             {
@@ -76,7 +82,7 @@ public class PlayerBehaviour : MonoBehaviour
                 gameObjects.Add(go);
                 timer = 2f;
 
-                if(gameObjects.Count == 2)
+                if (gameObjects.Count == 2)
                 {
                     lineDrawer.GetComponent<LineDrawBehaviour>().DrawLine(gameObjects[0], gameObjects[1]);
                 }
@@ -103,6 +109,7 @@ public class PlayerBehaviour : MonoBehaviour
                 // Stop timers, reset lasthit
                 timerComment = 2f;
                 lastHitComment = new RaycastHit();
+                return false;
             }
             else if (lastHitComment.collider == null || hit.collider.gameObject != lastHitComment.collider.gameObject)
             {
@@ -112,6 +119,7 @@ public class PlayerBehaviour : MonoBehaviour
             else if (timerComment > 0f)
             {
                 timerComment -= Time.deltaTime;
+                loadingImage.fillAmount = map(timerComment, 2f, 0f, 0f, 1f);
             }
             else
             {
@@ -122,6 +130,7 @@ public class PlayerBehaviour : MonoBehaviour
             }
             return true;
         }
+        timerComment = 2f;
         return false;
     }
 
@@ -129,20 +138,34 @@ public class PlayerBehaviour : MonoBehaviour
     {
         if(showGUI)
         {
-            commentText = GUI.TextField(new Rect(10, 10, 300, 200), commentText);
+            commentText = GUI.TextArea(new Rect(10, 10, 700, 600), commentText);
             commentTextMesh.text = commentText;
 
-            if (GUI.Button(new Rect(310, 10, 50, 30), "(Y)"))
+            if (GUI.Button(new Rect(250, 615, 100, 60), "YES"))
                 showGUI = false;
 
-            if (GUI.Button(new Rect(310, 40, 50, 30), "(N)"))
+            if (GUI.Button(new Rect(380, 615, 100, 60), "NO"))
             {
                 commentTextMesh.text = "";
                 commentText = "";
                 showGUI = false;
             }
-                
+  
+        }
 
+        if(gameObjects.Count == 2 && !test)
+        {
+            if (GUI.Button(new Rect(1380, 10, 200, 120), "SEND"))
+            {
+                var data = new Dictionary<string, object>();
+                data.Add("motion-sensor", _http.GetSensorDict());
+                data.Add("phillips-hue", _http.GetLightDict());
+                data.Add("comment", commentText);
+
+                json = Newtonsoft.Json.JsonConvert.SerializeObject(data);
+                StartCoroutine(_http.SendDataToAPI(json));
+                test = true;
+            }
         }
     }
 

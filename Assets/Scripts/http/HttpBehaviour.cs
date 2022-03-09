@@ -38,7 +38,8 @@ public class HttpBehaviour : MonoBehaviour
         if (state)
         {
             www = UnityWebRequest.Get("http://127.0.0.1:5000/on");
-        } else
+        } 
+        else
         {
             www = UnityWebRequest.Get("http://127.0.0.1:5000/off");
         }
@@ -60,14 +61,14 @@ public class HttpBehaviour : MonoBehaviour
     {
         UnityWebRequest www;
 
-        www = UnityWebRequest.Get("http://127.0.0.1:5000/getLightInformation");
+        www = UnityWebRequest.Get("http://192.168.0.246:5000/getLightInformation");
 
         yield return www.SendWebRequest();
 
         if (www.result != UnityWebRequest.Result.Success)
         {
             lightDict = null;
-            Debug.Log(www.error);
+            //Debug.Log(www.error);
         }
         else
         {
@@ -82,14 +83,14 @@ public class HttpBehaviour : MonoBehaviour
     {
         UnityWebRequest www;
 
-        www = UnityWebRequest.Get("http://127.0.0.1:5000/getAllSensorInformation");
+        www = UnityWebRequest.Get("http://192.168.0.246:5000/getAllSensorInformation");
 
         yield return www.SendWebRequest();
 
         if (www.result != UnityWebRequest.Result.Success)
         {
             lightDict = null;
-            Debug.Log(www.error);
+            //Debug.Log(www.error);
         }
         else
         {
@@ -108,5 +109,30 @@ public class HttpBehaviour : MonoBehaviour
     public Dictionary<String, System.Object> GetLightDict()
     {
         return lightDict;
+    }
+
+    public IEnumerator SendDataToAPI(string json)
+    {
+        Debug.Log(json);
+        UnityWebRequest www;
+        
+        //www.SetRequestHeader("Content-Type", "application/json");
+
+        www = new UnityWebRequest("http://192.168.0.246:5000/json", "POST");
+        byte[] bodyRaw = Encoding.UTF8.GetBytes(json);
+        www.uploadHandler = (UploadHandler)new UploadHandlerRaw(bodyRaw);
+        www.downloadHandler = (DownloadHandler)new DownloadHandlerBuffer();
+        www.SetRequestHeader("Content-Type", "application/json");
+
+        yield return www.SendWebRequest();
+
+        if (www.result != UnityWebRequest.Result.Success)
+        {
+            Debug.Log(www.error);
+        }
+        else
+        {
+            Debug.Log(www.result);
+        }
     }
 }
