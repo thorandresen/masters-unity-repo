@@ -21,7 +21,7 @@ public class PlayerBehaviour : MonoBehaviour
     List<GameObject> gameObjects = new List<GameObject>();
 
     string json;
-    bool test = false;
+    bool UIbool = false;
 
     [SerializeField]
     GameObject lineDrawer;
@@ -32,10 +32,21 @@ public class PlayerBehaviour : MonoBehaviour
     [SerializeField]
     HttpBehaviour _http;
 
+    [SerializeField]
+    List<GameObject> objectUIs;
+
+    private Button clearButton;
+    private GameObject bulbImage;
+    private GameObject motionImage;
+
     // Start is called before the first frame update
     void Start()
     {
-        
+        clearButton = objectUIs[2].GetComponent<Button>();
+        bulbImage = objectUIs[0];
+        motionImage = objectUIs[1];
+        bulbImage.SetActive(false);
+        motionImage.SetActive(false);
     }
 
     // Update is called once per frame
@@ -43,6 +54,7 @@ public class PlayerBehaviour : MonoBehaviour
     {
         bool w = HandleGazeSelection();
         bool s = HandleCommentBlock();
+        HandleObjectUI();
 
         if(!w && !s)
         {
@@ -134,6 +146,31 @@ public class PlayerBehaviour : MonoBehaviour
         return false;
     }
 
+    private void HandleObjectUI()
+    {
+        if(gameObjects.Contains(GameObject.Find("SensorCube")))
+        {
+            motionImage.SetActive(true);
+        }
+        if (gameObjects.Contains(GameObject.Find("LightCube")))
+        {
+            bulbImage.SetActive(true);
+        }
+    }
+
+    public void ClearListener()
+    {
+        motionImage.SetActive(false);
+        bulbImage.SetActive(false);
+
+        gameObjects.Clear();
+
+        GameObject line = GameObject.Find("LinePrefab(Clone)");
+        GameObject link = GameObject.Find("LinkPrefab(Clone)");
+        Destroy(line);
+        Destroy(link);
+    }
+
     private void OnGUI()
     {
         if(showGUI)
@@ -153,9 +190,9 @@ public class PlayerBehaviour : MonoBehaviour
   
         }
 
-        if(gameObjects.Count == 2 && !test)
+        if(gameObjects.Count == 2 && !UIbool)
         {
-            if (GUI.Button(new Rect(1380, 10, 200, 120), "SEND"))
+            if (GUI.Button(new Rect(1100, 10, 200, 120), "SEND"))
             {
                 var data = new Dictionary<string, object>();
                 data.Add("motion-sensor", _http.GetSensorDict());
@@ -164,7 +201,7 @@ public class PlayerBehaviour : MonoBehaviour
 
                 json = Newtonsoft.Json.JsonConvert.SerializeObject(data);
                 StartCoroutine(_http.SendDataToAPI(json));
-                test = true;
+                UIbool = true;
             }
         }
     }
