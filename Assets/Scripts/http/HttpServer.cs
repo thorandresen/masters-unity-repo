@@ -1,81 +1,68 @@
+using Newtonsoft.Json;
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.IO;
 using System.Net;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 using UnityEngine;
 
 public class HttpServer : MonoBehaviour
 {
-    // Start is called before the first frame update
-    void Start()
-    {
+	private HttpListener listener;
+	private Thread listenerThread;
 
-    }
+	[SerializeField]
+	PlayerBehaviour playerBehaviour;
 
+	void Start()
+	{
+		listener = new HttpListener();
+		listener.Prefixes.Add("http://localhost:4444/");
+		listener.Prefixes.Add("http://127.0.0.1:4444/");
+		//listener.Prefixes.Add("http://192.168.0.121:4444/");
+		listener.AuthenticationSchemes = AuthenticationSchemes.Anonymous;
+		listener.Start();
 
-    public static HttpListener listener;
-    public static string url = "http://localhost:8000/";
-    public static int pageViews = 0;
-    public static int requestCount = 0;
-    public static string pageData =
-        "<!DOCTYPE>" +
-        "<html>" +
-        "  <head>" +
-        "    <title>HttpListener Example</title>" +
-        "  </head>" +
-        "  <body>" +
-        "    <p>Page Views: {0}</p>" +
-        "    <form method=\"post\" action=\"shutdown\">" +
-        "      <input type=\"submit\" value=\"Shutdown\" {1}>" +
-        "    </form>" +
-        "  </body>" +
-        "</html>";
+		listenerThread = new Thread(startListener);
+		listenerThread.Start();
+		Debug.Log("Server Started");
+	}
 
+	void Update()
+	{
+	}
 
-    public static async Task HandleIncomingConnections()
-    {
-        bool runServer = true;
+	private void startListener()
+	{
+		while (true)
+		{
+			var result = listener.BeginGetContext(ListenerCallback, listener);
+			result.AsyncWaitHandle.WaitOne();
+		}
+	}
 
-        // While a user hasn't visited the `shutdown` url, keep on handling requests
-        while (runServer)
-        {
-            // Will wait here until we hear from a connection
-            HttpListenerContext ctx = await listener.GetContextAsync();
+	private void ListenerCallback(IAsyncResult result)
+	{
+		var context = listener.EndGetContext(result);
 
-            // Peel out the requests and response objects
-            HttpListenerRequest req = ctx.Request;
-            HttpListenerResponse resp = ctx.Response;
+		if (context.Request.QueryString.AllKeys.Length > 0)
+			foreach (var key in context.Request.QueryString.AllKeys)
+			{
+				Debug.Log("Key: " + key + ", Value: " + context.Request.QueryString.GetValues(key)[0]);
+			}
 
-            // Print out some info about the request
-            Debug.Log(req.Url.ToString());
-            Debug.Log(req.HttpMethod);
-            Debug.Log(req.UserHostName);
-            Debug.Log(req.UserAgent);
-            Debug.Log("");
+		if (context.Request.HttpMethod == "POST")
+		{
+			Thread.Sleep(1000);
+			string data_text = new StreamReader(context.Request.InputStream,
+								context.Request.ContentEncoding).ReadToEnd();
 
-            // If `shutdown` url requested w/ POST, then shutdown the server after serving the page
-            if ((req.HttpMethod == "POST") && (req.Url.AbsolutePath == "/shutdown"))
-            {
-                Debug.Log("Shutdown requested");
-                runServer = false;
-            }
+			playerBehaviour.HandleIncomingObject(data_text);
+		}
 
-            // Make sure we don't increment the page views counter if `favicon.ico` is requested
-            if (req.Url.AbsolutePath != "/favicon.ico")
-                pageViews += 1;
-
-            // Write the response info
-            string disableSubmit = !runServer ? "disabled" : "";
-            byte[] data = Encoding.UTF8.GetBytes(String.Format(pageData, pageViews, disableSubmit));
-            resp.ContentType = "text/html";
-            resp.ContentEncoding = Encoding.UTF8;
-            resp.ContentLength64 = data.LongLength;
-
-            // Write out to the response stream (asynchronously), then close it
-            await resp.OutputStream.WriteAsync(data, 0, data.Length);
-            resp.Close();
-        }
-    }
+		context.Response.Close();
+	}
 }

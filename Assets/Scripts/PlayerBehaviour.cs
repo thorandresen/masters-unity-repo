@@ -1,4 +1,5 @@
-using System.Collections;
+using Newtonsoft.Json;
+using System;
 using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
@@ -14,7 +15,7 @@ public class PlayerBehaviour : MonoBehaviour
 
     bool showGUI = false;
     string commentText = "";
-    TextMeshPro commentTextMesh;
+    TextMeshPro commentTextMesh = null;
 
     float timer = 2f;
     float timerComment = 2f;
@@ -22,6 +23,9 @@ public class PlayerBehaviour : MonoBehaviour
 
     string json;
     bool UIbool = false;
+
+    bool updateCommenText = false;
+    string incomingText = "";
 
     [SerializeField]
     GameObject lineDrawer;
@@ -35,14 +39,12 @@ public class PlayerBehaviour : MonoBehaviour
     [SerializeField]
     List<GameObject> objectUIs;
 
-    private Button clearButton;
     private GameObject bulbImage;
     private GameObject motionImage;
 
     // Start is called before the first frame update
     void Start()
     {
-        clearButton = objectUIs[2].GetComponent<Button>();
         bulbImage = objectUIs[0];
         motionImage = objectUIs[1];
         bulbImage.SetActive(false);
@@ -171,6 +173,26 @@ public class PlayerBehaviour : MonoBehaviour
         Destroy(link);
     }
 
+    public void HandleIncomingObject(string data)
+    {
+        try
+        {
+            var rootObject = JsonConvert.DeserializeObject<Rootobject>(data);
+
+            if(commentTextMesh != null)
+            {
+                incomingText = rootObject.comment.text;
+                updateCommenText = true;
+            }
+        }
+        catch (Exception e)
+        {
+            Debug.Log(e);
+        }
+
+        
+    }
+
     private void OnGUI()
     {
         if(showGUI)
@@ -203,6 +225,12 @@ public class PlayerBehaviour : MonoBehaviour
                 StartCoroutine(_http.SendDataToAPI(json));
                 UIbool = true;
             }
+        }
+
+        if(updateCommenText)
+        {
+            commentTextMesh.text = incomingText;
+            updateCommenText = false;
         }
     }
 
