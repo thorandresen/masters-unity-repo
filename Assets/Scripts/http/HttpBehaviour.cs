@@ -32,18 +32,45 @@ public class HttpBehaviour : MonoBehaviour
         }
     }
 
-    public IEnumerator ChangeLightState(bool state)
+    public IEnumerator ChangeLightOnOffState(bool state)
     {
         UnityWebRequest www;
         if (state)
         {
-            www = UnityWebRequest.Get("http://127.0.0.1:5000/on");
+            www = UnityWebRequest.Get("http://192.168.0.246:5000/on");
         } 
         else
         {
-            www = UnityWebRequest.Get("http://127.0.0.1:5000/off");
+            www = UnityWebRequest.Get("http://192.168.0.246:5000/off");
         }
         
+        yield return www.SendWebRequest();
+
+        if (www.result != UnityWebRequest.Result.Success)
+        {
+            Debug.Log(www.error);
+        }
+        else
+        {
+            Debug.Log("Upload complete!");
+        }
+    }
+
+    public IEnumerator ChangeLightState(string state, int value)
+    {
+        UnityWebRequest www;
+        if (state == "hue")
+        {
+            www = UnityWebRequest.Get("http://192.168.0.246:5000/setHue?value=" + value);
+        }
+        else if (state == "ct")
+        {
+            www = UnityWebRequest.Get("http://192.168.0.246:5000/setCT?value=" + value);
+        }
+        else
+        {
+            www = UnityWebRequest.Get("http://192.168.0.246:5000/setBrightness?value=" + value);
+        }
 
         yield return www.SendWebRequest();
 

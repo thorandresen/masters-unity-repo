@@ -42,6 +42,9 @@ public class PlayerBehaviour : MonoBehaviour
     private GameObject bulbImage;
     private GameObject motionImage;
 
+    [SerializeField]
+    FunctionalityBehaviour funcGameObject;
+
     // Start is called before the first frame update
     void Start()
     {
@@ -173,7 +176,7 @@ public class PlayerBehaviour : MonoBehaviour
         Destroy(link);
     }
 
-    public void HandleIncomingObject(string data)
+    public async void HandleIncomingObject(string data)
     {
         try
         {
@@ -184,13 +187,13 @@ public class PlayerBehaviour : MonoBehaviour
                 incomingText = rootObject.comment.text;
                 updateCommenText = true;
             }
+
+            funcGameObject.root = rootObject;
         }
         catch (Exception e)
         {
             Debug.Log(e);
         }
-
-        
     }
 
     private void OnGUI()

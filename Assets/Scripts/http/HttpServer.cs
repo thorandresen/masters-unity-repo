@@ -22,8 +22,8 @@ public class HttpServer : MonoBehaviour
 		listener = new HttpListener();
 		listener.Prefixes.Add("http://localhost:4444/");
 		listener.Prefixes.Add("http://127.0.0.1:4444/");
-		//listener.Prefixes.Add("http://192.168.0.121:4444/");
-		listener.AuthenticationSchemes = AuthenticationSchemes.Anonymous;
+        listener.Prefixes.Add("http://192.168.0.121:4444/");
+        listener.AuthenticationSchemes = AuthenticationSchemes.Anonymous;
 		listener.Start();
 
 		listenerThread = new Thread(startListener);

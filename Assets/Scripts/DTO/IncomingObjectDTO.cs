@@ -21,8 +21,9 @@ public class Trigger
 {
     public int deviceId { get; set; }
     public string state { get; set; }
-    public string _operator { get; set; }
+    public string operatorType { get; set; }
     public string value { get; set; }
+    public string valueType { get; set; }
 }
 
 public class Action
@@ -30,7 +31,5 @@ public class Action
     public int deviceId { get; set; }
     public string state { get; set; }
     public string value { get; set; }
+    public string valueType { get; set; }
 }
-
-
-
