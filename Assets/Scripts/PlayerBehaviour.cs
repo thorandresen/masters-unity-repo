@@ -45,6 +45,14 @@ public class PlayerBehaviour : MonoBehaviour
     [SerializeField]
     FunctionalityBehaviour funcGameObject;
 
+    [SerializeField]
+    GameObject funcPrefab;
+
+    private bool spawnPrefab = false;
+    private GameObject funcGO;
+
+    private Rootobject rootObject;
+
     // Start is called before the first frame update
     void Start()
     {
@@ -64,6 +72,14 @@ public class PlayerBehaviour : MonoBehaviour
         if(!w && !s)
         {
             loadingImage.fillAmount = 0f;
+        }
+
+        if(spawnPrefab)
+        {
+            funcGO = Instantiate(funcPrefab, new Vector3(0, 0, 0), Quaternion.identity);
+            funcGO.GetComponent<FunctionalityBehaviour>().http = GameObject.Find("HttpObject").GetComponent<HttpBehaviour>();
+            funcGO.GetComponent<FunctionalityBehaviour>().root = rootObject;
+            spawnPrefab = false;
         }
     }
 
@@ -180,7 +196,7 @@ public class PlayerBehaviour : MonoBehaviour
     {
         try
         {
-            var rootObject = JsonConvert.DeserializeObject<Rootobject>(data);
+            rootObject = JsonConvert.DeserializeObject<Rootobject>(data);
 
             if(commentTextMesh != null)
             {
@@ -188,7 +204,7 @@ public class PlayerBehaviour : MonoBehaviour
                 updateCommenText = true;
             }
 
-            funcGameObject.root = rootObject;
+            spawnPrefab = true;
         }
         catch (Exception e)
         {

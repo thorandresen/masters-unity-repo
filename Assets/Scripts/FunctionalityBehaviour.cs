@@ -12,8 +12,9 @@ public class FunctionalityBehaviour : MonoBehaviour
     public dynamic triggerVal;
     public dynamic actionVal;
 
-    [SerializeField]
-    HttpBehaviour http;
+    
+    public HttpBehaviour http;
+
     // Start is called before the first frame update
     void Start()
     {
@@ -65,12 +66,14 @@ public class FunctionalityBehaviour : MonoBehaviour
             if(retrieveStateOfTrigger() == triggerVal)
             {
                 setStateOfAction();
+                Debug.Log("State and val was EQUAL");
             }
         }
         else if (root.trigger.operatorType == ">") {
             if (retrieveStateOfTrigger() > triggerVal)
             {
                 setStateOfAction();
+                Debug.Log("State was GREATER than val");
             }
         }
         else if (root.trigger.operatorType == "<")
@@ -78,6 +81,7 @@ public class FunctionalityBehaviour : MonoBehaviour
             if (retrieveStateOfTrigger() < triggerVal)
             {
                 setStateOfAction();
+                Debug.Log("State was LESSER than val");
             }
         }
     }
@@ -111,6 +115,6 @@ public class FunctionalityBehaviour : MonoBehaviour
 
     void setStateOfAction()
     {
-        StartCoroutine(http.ChangeLightState(root.action.state, Convert.ToInt32(root.action.value)));
+        StartCoroutine(http.ChangeLightState(root.action.state, root.action.value));
     }
 }
