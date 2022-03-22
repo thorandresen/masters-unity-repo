@@ -88,7 +88,7 @@ public class FunctionalityBehaviour : MonoBehaviour
 
     dynamic retrieveStateOfTrigger()
     {
-        if(root.trigger.deviceId == 1923)
+        if(root.trigger.deviceId == "1923")
         {
             var sensorDict = http.GetSensorDict();
             var state = sensorDict[root.trigger.state];

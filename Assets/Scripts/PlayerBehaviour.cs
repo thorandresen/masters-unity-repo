@@ -50,6 +50,13 @@ public class PlayerBehaviour : MonoBehaviour
 
     private bool spawnPrefab = false;
     private GameObject funcGO;
+    private bool deployUI = false;
+
+    [SerializeField]
+    private Button deployButton;
+
+    [SerializeField]
+    private GameObject deployText;
 
     private Rootobject rootObject;
 
@@ -60,6 +67,8 @@ public class PlayerBehaviour : MonoBehaviour
         motionImage = objectUIs[1];
         bulbImage.SetActive(false);
         motionImage.SetActive(false);
+
+        Debug.Log(deployText.GetComponent<TextMeshPro>());
     }
 
     // Update is called once per frame
@@ -80,6 +89,7 @@ public class PlayerBehaviour : MonoBehaviour
             funcGO.GetComponent<FunctionalityBehaviour>().http = GameObject.Find("HttpObject").GetComponent<HttpBehaviour>();
             funcGO.GetComponent<FunctionalityBehaviour>().root = rootObject;
             spawnPrefab = false;
+            deployUI = false;
         }
     }
 
@@ -198,18 +208,26 @@ public class PlayerBehaviour : MonoBehaviour
         {
             rootObject = JsonConvert.DeserializeObject<Rootobject>(data);
 
-            if(commentTextMesh != null)
-            {
-                incomingText = rootObject.comment.text;
-                updateCommenText = true;
-            }
+            incomingText = rootObject.comment.text;
+            //if (commentTextMesh != null)
+            //{
+            //    incomingText = rootObject.comment.text;
+            //    //updateCommenText = true;
+            //}
 
-            spawnPrefab = true;
+            //spawnPrefab = true;
+            deployUI = true;
         }
         catch (Exception e)
         {
             Debug.Log(e);
         }
+    }
+
+    public void SpawnPrefab()
+    {
+        updateCommenText = true;
+        spawnPrefab = true;
     }
 
     private void OnGUI()
@@ -236,8 +254,6 @@ public class PlayerBehaviour : MonoBehaviour
             if (GUI.Button(new Rect(1100, 10, 200, 120), "SEND"))
             {
                 var data = new Dictionary<string, object>();
-                data.Add("motion-sensor", _http.GetSensorDict());
-                data.Add("phillips-hue", _http.GetLightDict());
                 data.Add("comment", commentText);
 
                 json = Newtonsoft.Json.JsonConvert.SerializeObject(data);
@@ -250,6 +266,16 @@ public class PlayerBehaviour : MonoBehaviour
         {
             commentTextMesh.text = incomingText;
             updateCommenText = false;
+        }
+
+        if(deployUI)
+        {
+            deployButton.gameObject.SetActive(true);
+            deployText.GetComponent<TextMeshProUGUI>().text = incomingText;
+        } 
+        else
+        {
+            deployButton.gameObject.SetActive(false);
         }
     }
 

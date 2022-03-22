@@ -149,12 +149,11 @@ public class HttpBehaviour : MonoBehaviour
 
     public IEnumerator SendDataToAPI(string json)
     {
-        Debug.Log(json);
         UnityWebRequest www;
         
         //www.SetRequestHeader("Content-Type", "application/json");
 
-        www = new UnityWebRequest("http://192.168.0.246:5000/json", "POST");
+        www = new UnityWebRequest("http://192.168.0.246:5000/data", "POST");
         byte[] bodyRaw = Encoding.UTF8.GetBytes(json);
         www.uploadHandler = (UploadHandler)new UploadHandlerRaw(bodyRaw);
         www.downloadHandler = (DownloadHandler)new DownloadHandlerBuffer();
