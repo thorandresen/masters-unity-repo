@@ -232,7 +232,7 @@ Transform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1643830628803932864}
-  m_LocalRotation: {x: 0, y: 0.85693884, z: 0, w: -0.5154181}
+  m_LocalRotation: {x: 0, y: 0.84884953, z: 0, w: 0.52863455}
   m_LocalPosition: {x: -0.074, y: 0, z: 0.055}
   m_LocalScale: {x: 1.7513136, y: 1.7513134, z: 1.7513136}
   m_Children:
@@ -264,7 +264,7 @@ GameObject:
   - component: {fileID: 1643830628992023863}
   - component: {fileID: 1643830628992023860}
   m_Layer: 6
-  m_Name: Text
+  m_Name: LinkText
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -278,7 +278,7 @@ RectTransform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1643830628992023858}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: -0.017}
+  m_LocalPosition: {x: 0, y: 0, z: -0.25}
   m_LocalScale: {x: 0.044763, y: 0.18423, z: 1}
   m_Children: []
   m_Father: {fileID: 1643830628527712562}
@@ -350,9 +350,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: 'Test test test test
-
-    Test test'
+  m_text: 
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
   m_sharedMaterial: {fileID: 2180264, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
@@ -379,7 +377,7 @@ MonoBehaviour:
   m_faceColor:
     serializedVersion: 2
     rgba: 4294967295
-  m_fontSize: 22.05
+  m_fontSize: 36
   m_fontSizeBase: 36
   m_fontWeight: 400
   m_enableAutoSizing: 1

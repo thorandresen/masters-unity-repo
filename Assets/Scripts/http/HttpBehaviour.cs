@@ -89,7 +89,7 @@ public class HttpBehaviour : MonoBehaviour
         }
         else
         {
-            Debug.Log("Upload complete!");
+            //Debug.Log("Upload complete!");
         }
     }
 

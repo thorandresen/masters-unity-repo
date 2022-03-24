@@ -32,4 +32,16 @@ public class LineBehaviour : MonoBehaviour
         this.obj2 = obj2;
         this.link = link;
     }
+
+    public void SetGradientToDeployColors()
+    {
+        Gradient gradient = localLine.colorGradient;
+
+        gradient.SetKeys(
+            new GradientColorKey[] { new GradientColorKey(new Color(154/255f, 220/255f, 255/255f), 0.0f), new GradientColorKey(new Color(255 / 255f, 248 / 255f, 154 / 255f), 1.0f) },
+            new GradientAlphaKey[] { new GradientAlphaKey(0.8f, 0.0f), new GradientAlphaKey(1.0f, 0.5f), new GradientAlphaKey(0.8f, 1.0f) }
+        );
+
+        localLine.colorGradient = gradient;
+    }
 }

@@ -37,6 +37,7 @@ public class LineDrawBehaviour : MonoBehaviour
         LineRenderer localLine = Instantiate(linePrefab, transform.position, Quaternion.identity);
 
         localLink = CreateLink(obj1, obj2);
+        SetActiveStateOfLink(false);
 
         localLine.SetPosition(0, obj1.transform.position);
         localLine.SetPosition(1, localLink.transform.position);
@@ -49,5 +50,10 @@ public class LineDrawBehaviour : MonoBehaviour
     private GameObject CreateLink(GameObject obj1, GameObject obj2)
     {
         return Instantiate(linkPrefab, Vector3.Lerp(obj1.transform.position, obj2.transform.position, 0.5f), Quaternion.identity);
+    }
+
+    public void SetActiveStateOfLink(bool state)
+    {
+        localLink.SetActive(state);
     }
 }

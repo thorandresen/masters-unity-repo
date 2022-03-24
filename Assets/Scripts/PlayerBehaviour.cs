@@ -67,18 +67,16 @@ public class PlayerBehaviour : MonoBehaviour
         motionImage = objectUIs[1];
         bulbImage.SetActive(false);
         motionImage.SetActive(false);
-
-        Debug.Log(deployText.GetComponent<TextMeshPro>());
     }
 
     // Update is called once per frame
     void FixedUpdate()
     {
         bool w = HandleGazeSelection();
-        bool s = HandleCommentBlock();
+        //bool s = HandleCommentBlock();
         HandleObjectUI();
 
-        if(!w && !s)
+        if(!w)
         {
             loadingImage.fillAmount = 0f;
         }
@@ -88,6 +86,14 @@ public class PlayerBehaviour : MonoBehaviour
             funcGO = Instantiate(funcPrefab, new Vector3(0, 0, 0), Quaternion.identity);
             funcGO.GetComponent<FunctionalityBehaviour>().http = GameObject.Find("HttpObject").GetComponent<HttpBehaviour>();
             funcGO.GetComponent<FunctionalityBehaviour>().root = rootObject;
+
+            LineBehaviour lb = FindObjectOfType<LineBehaviour>();
+            lb.SetGradientToDeployColors();
+
+            LineDrawBehaviour ldb = FindObjectOfType<LineDrawBehaviour>();
+            ldb.SetActiveStateOfLink(true);
+            commentTextMesh = GameObject.Find("LinkText").GetComponent<TextMeshPro>();
+            updateCommenText = true;
             spawnPrefab = false;
             deployUI = false;
         }
@@ -226,7 +232,7 @@ public class PlayerBehaviour : MonoBehaviour
 
     public void SpawnPrefab()
     {
-        updateCommenText = true;
+        
         spawnPrefab = true;
     }
 
