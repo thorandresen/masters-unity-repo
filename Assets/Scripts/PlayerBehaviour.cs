@@ -73,10 +73,10 @@ public class PlayerBehaviour : MonoBehaviour
     void FixedUpdate()
     {
         bool w = HandleGazeSelection();
-        //bool s = HandleCommentBlock();
+        bool s = HandleVariability();
         HandleObjectUI();
 
-        if(!w)
+        if(!w && !s)
         {
             loadingImage.fillAmount = 0f;
         }
@@ -176,6 +176,58 @@ public class PlayerBehaviour : MonoBehaviour
                 commentTextMesh = go.GetComponentInChildren<TextMeshPro>();
                 showGUI = true;
                 timerComment = 2f;
+            }
+            return true;
+        }
+        timerComment = 2f;
+        return false;
+    }
+
+    private bool HandleVariability()
+    {
+        RaycastHit hit;
+
+        if (showGUI)
+            return false;
+
+        if (Physics.Raycast(transform.position, transform.forward, out hit, int.MaxValue, ~ignoreDefault))
+        {
+            GameObject go = hit.collider.gameObject;
+
+            if (!go.CompareTag("isTargetable") || gameObjects.Contains(go))
+            {
+                // Stop timers, reset lasthit
+                timerComment = 2f;
+                lastHitComment = new RaycastHit();
+                return false;
+            }
+            else if (lastHitComment.collider == null || hit.collider.gameObject != lastHitComment.collider.gameObject)
+            {
+                // Start timer with new object
+                lastHitComment = hit;
+            }
+            else if (timerComment > 0f)
+            {
+                timerComment -= Time.deltaTime;
+                loadingImage.fillAmount = map(timerComment, 2f, 0f, 0f, 1f);
+            }
+            else
+            {
+                // Set new to active and change the state
+                VariabilitySensorHandler sensorHandler = go.GetComponentInParent<VariabilitySensorHandler>();
+                VariabilityTriggerHandler triggerHandler = go.GetComponentInParent<VariabilityTriggerHandler>();
+                if (sensorHandler != null)
+                {
+                    sensorHandler.SetAllStatesToNormal();
+                    sensorHandler.SetObjectToActive(go.name);
+                    timerComment = 2f;
+                } 
+                else if (triggerHandler != null)
+                {
+                    triggerHandler.SetAllStatesToNormal();
+                    triggerHandler.SetObjectToActive(go.name);
+                    timerComment = 2f;
+                }
             }
             return true;
         }

@@ -6,6 +6,7 @@ TagManager:
   tags:
   - hasInfo
   - isCommentable
+  - isTargetable
   layers:
   - Default
   - TransparentFX
