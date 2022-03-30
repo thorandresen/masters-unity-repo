@@ -11,13 +11,23 @@ public class FunctionalityBehaviour : MonoBehaviour
     private float timer = 2f;
     public dynamic triggerVal;
     public dynamic actionVal;
-
     
     public HttpBehaviour http;
+    private VariabilityHolder vh;
+
+    private VariabilityHandler variabilityTrigger;
+    private VariabilityHandler variabilityAction;
+
+    private bool shouldOnlyRunOnce = false;
+    private string lightMode = "";
 
     // Start is called before the first frame update
     void Start()
     {
+        vh = GameObject.Find("VariabilityHolder").GetComponent<VariabilityHolder>();
+
+        variabilityTrigger = vh.GetSensor().GetComponent<VariabilityHandler>();
+        variabilityAction = vh.GetAction().GetComponent<VariabilityHandler>();
     }
 
     // Update is called once per frame
@@ -25,21 +35,41 @@ public class FunctionalityBehaviour : MonoBehaviour
     {
         if(root != null)
         {
-            if (timer <= 0f)
+            if (!variabilityAction.GetActiveStateOfObject() && root.action.includeVariability)
             {
-                HandleOperator();
-                timer = 2f;
+                variabilityAction.SetVisibilityOfObject(true);
             }
-            else
+
+            if (!variabilityTrigger.GetActiveStateOfObject() && root.trigger.includeVariability)
             {
-                timer -= Time.deltaTime;
+                variabilityTrigger.SetVisibilityOfObject(true);
             }
+
+            //if (timer <= 0f)
+            //{
+            //    HandleOperator();
+            //    timer = 1f;
+            //}
+            //else
+            //{
+            //    timer -= Time.deltaTime;
+            //}
+            if(!shouldOnlyRunOnce)
+            {
+                StartCoroutine(HandleOperator());
+                shouldOnlyRunOnce = true;
+            }
+            
         }
     }
 
-    private void HandleOperator()
+    private IEnumerator HandleOperator()
     {
-       
+        if(root.action.includeVariability && variabilityAction.GetActiveObject() != null)
+        {
+            lightMode = variabilityAction.GetActiveObject().name;
+        }
+
         switch (root.trigger.valueType)
         {
             case "bool":
@@ -63,10 +93,46 @@ public class FunctionalityBehaviour : MonoBehaviour
 
         if (root.trigger.operatorType == "==")
         {
-            if(retrieveStateOfTrigger() == triggerVal)
+            if (retrieveStateOfTrigger() == triggerVal)
             {
-                setStateOfAction();
-                Debug.Log("State and val was EQUAL");
+                if (root.trigger.includeVariability)
+                {
+                    string activeObjectName = variabilityTrigger.GetActiveObject().name;
+                    float triggerTimer = 0f;
+
+                    switch(activeObjectName)
+                    {
+                        case "1":
+                            triggerTimer = 1f;
+                            break;
+                        case "2":
+                            triggerTimer = 3f;
+                            break;
+                        case "3":
+                            triggerTimer = 5f;
+                            break;
+                        case "4":
+                            triggerTimer = 7f;
+                            break;
+                        case "5":
+                            triggerTimer = 10f;
+                            break;
+                    }
+
+                    yield return new WaitForSeconds(triggerTimer);
+
+                    if(retrieveStateOfTrigger() == triggerVal)
+                    {
+                        Debug.Log("SET STATE BASED ON VARIABILITY");
+                        setStateOfAction();
+                    }
+                }
+                else
+                {
+                    setStateOfAction();
+                }
+                
+                //Debug.Log("State and val was EQUAL");
             }
         }
         else if (root.trigger.operatorType == ">") {
@@ -84,6 +150,9 @@ public class FunctionalityBehaviour : MonoBehaviour
                 Debug.Log("State was LESSER than val");
             }
         }
+
+        yield return new WaitForSeconds(1);
+        StartCoroutine(HandleOperator());
     }
 
     dynamic retrieveStateOfTrigger()
@@ -115,6 +184,6 @@ public class FunctionalityBehaviour : MonoBehaviour
 
     void setStateOfAction()
     {
-        StartCoroutine(http.ChangeLightState(root.action.state, root.action.value));
+        StartCoroutine(http.ChangeLightState(root.action.state, root.action.value, lightMode));
     }
 }

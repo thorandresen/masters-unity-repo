@@ -24,6 +24,7 @@ public class Trigger
     public string operatorType { get; set; }
     public string value { get; set; }
     public string valueType { get; set; }
+    public bool includeVariability { get; set; }
 }
 
 public class Action
@@ -32,4 +33,5 @@ public class Action
     public string state { get; set; }
     public string value { get; set; }
     public string valueType { get; set; }
+    public bool includeVariability { get; set; }
 }

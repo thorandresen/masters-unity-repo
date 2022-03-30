@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 
-public class VariabilityTriggerHandler : MonoBehaviour
+public class VariabilityHandler : MonoBehaviour
 {
     [SerializeField]
     List<GameObject> choices;
@@ -14,10 +14,12 @@ public class VariabilityTriggerHandler : MonoBehaviour
     [SerializeField]
     Material normal;
 
+    private GameObject activeObject;
+
     // Start is called before the first frame update
     void Start()
     {
-        
+        activeObject = choices[0];
     }
 
     // Update is called once per frame
@@ -36,11 +38,23 @@ public class VariabilityTriggerHandler : MonoBehaviour
 
     public void SetObjectToActive(string name)
     {
-        choices.Where(x => x.name == name).FirstOrDefault().GetComponent<MeshRenderer>().material = active;
+        activeObject = choices.Where(x => x.name == name).FirstOrDefault();
+        activeObject.GetComponent<MeshRenderer>().material = active;
+        Debug.Log("CHANGED ACTIVE OBJECT TO: " + activeObject.name);
     }
 
-    public void SetVisibilityOfSensor(bool state)
+    public void SetVisibilityOfObject(bool state)
     {
         gameObject.SetActive(state);
+    }
+
+    public bool GetActiveStateOfObject()
+    {
+        return gameObject.activeSelf;
+    }
+
+    public GameObject GetActiveObject()
+    {
+        return activeObject;
     }
 }

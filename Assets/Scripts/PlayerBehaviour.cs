@@ -214,20 +214,11 @@ public class PlayerBehaviour : MonoBehaviour
             else
             {
                 // Set new to active and change the state
-                VariabilitySensorHandler sensorHandler = go.GetComponentInParent<VariabilitySensorHandler>();
-                VariabilityTriggerHandler triggerHandler = go.GetComponentInParent<VariabilityTriggerHandler>();
-                if (sensorHandler != null)
-                {
-                    sensorHandler.SetAllStatesToNormal();
-                    sensorHandler.SetObjectToActive(go.name);
-                    timerComment = 2f;
-                } 
-                else if (triggerHandler != null)
-                {
-                    triggerHandler.SetAllStatesToNormal();
-                    triggerHandler.SetObjectToActive(go.name);
-                    timerComment = 2f;
-                }
+                VariabilityHandler handler = go.GetComponentInParent<VariabilityHandler>();
+                handler.SetAllStatesToNormal();
+                handler.SetObjectToActive(go.name);
+                timerComment = 2f;
+
             }
             return true;
         }
@@ -265,15 +256,7 @@ public class PlayerBehaviour : MonoBehaviour
         try
         {
             rootObject = JsonConvert.DeserializeObject<Rootobject>(data);
-
             incomingText = rootObject.comment.text;
-            //if (commentTextMesh != null)
-            //{
-            //    incomingText = rootObject.comment.text;
-            //    //updateCommenText = true;
-            //}
-
-            //spawnPrefab = true;
             deployUI = true;
         }
         catch (Exception e)
