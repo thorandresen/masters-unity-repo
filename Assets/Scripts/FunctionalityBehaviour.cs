@@ -45,15 +45,6 @@ public class FunctionalityBehaviour : MonoBehaviour
                 variabilityTrigger.SetVisibilityOfObject(true);
             }
 
-            //if (timer <= 0f)
-            //{
-            //    HandleOperator();
-            //    timer = 1f;
-            //}
-            //else
-            //{
-            //    timer -= Time.deltaTime;
-            //}
             if(!shouldOnlyRunOnce)
             {
                 StartCoroutine(HandleOperator());

@@ -1,6 +1,7 @@
 using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
@@ -13,6 +14,10 @@ public class PlayerBehaviour : MonoBehaviour
     RaycastHit lastHit = new RaycastHit();
     RaycastHit lastHitComment = new RaycastHit();
 
+    [SerializeField]
+    Text selectButtonText;
+
+    bool isSelect = true;
     bool showGUI = false;
     string commentText = "";
     TextMeshPro commentTextMesh = null;
@@ -48,12 +53,17 @@ public class PlayerBehaviour : MonoBehaviour
     [SerializeField]
     GameObject funcPrefab;
 
+    List<GameObject> funcObjects = new List<GameObject>();
+
     private bool spawnPrefab = false;
     private GameObject funcGO;
     private bool deployUI = false;
 
     [SerializeField]
     private Button deployButton;
+
+    [SerializeField]
+    private Button deployOverwriteButton;
 
     [SerializeField]
     private GameObject deployText;
@@ -96,12 +106,17 @@ public class PlayerBehaviour : MonoBehaviour
             updateCommenText = true;
             spawnPrefab = false;
             deployUI = false;
+
+            funcObjects.Add(funcGO);
         }
     }
 
     private bool HandleGazeSelection()
     {
         RaycastHit hit;
+
+        if (!isSelect)
+            return false;
 
         if (Physics.Raycast(transform.position, transform.forward, out hit, int.MaxValue, ~ignoreMask))
         {
@@ -187,7 +202,7 @@ public class PlayerBehaviour : MonoBehaviour
     {
         RaycastHit hit;
 
-        if (showGUI)
+        if (showGUI || !isSelect)
             return false;
 
         if (Physics.Raycast(transform.position, transform.forward, out hit, int.MaxValue, ~ignoreDefault))
@@ -267,7 +282,13 @@ public class PlayerBehaviour : MonoBehaviour
 
     public void SpawnPrefab()
     {
-        
+        spawnPrefab = true;
+    }
+
+    public void SpawnAndOverwritePrefab()
+    {
+        funcObjects.All(x => { Destroy(x); return true; });
+        funcObjects.Clear();
         spawnPrefab = true;
     }
 
@@ -311,17 +332,36 @@ public class PlayerBehaviour : MonoBehaviour
 
         if(deployUI)
         {
+            if(funcObjects.Any())
+            {
+                deployOverwriteButton.gameObject.SetActive(true);
+            }
             deployButton.gameObject.SetActive(true);
             deployText.GetComponent<TextMeshProUGUI>().text = incomingText;
         } 
         else
         {
             deployButton.gameObject.SetActive(false);
+            deployOverwriteButton.gameObject.SetActive(false);
         }
     }
 
     private float map(float x, float in_min, float in_max, float out_min, float out_max)
     {
         return (x - in_min) * (out_max - out_min) / (in_max - in_min) + out_min;
+    }
+
+    public void ToggleSelect()
+    {
+        isSelect = !isSelect;
+
+        if(isSelect)
+        {
+            selectButtonText.text = "SELECT";
+        } 
+        else
+        {
+            selectButtonText.text = "LOOK";
+        }
     }
 }
