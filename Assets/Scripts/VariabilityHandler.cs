@@ -41,6 +41,8 @@ public class VariabilityHandler : MonoBehaviour
         activeObject = choices.Where(x => x.name == name).FirstOrDefault();
         activeObject.GetComponent<MeshRenderer>().material = active;
         Debug.Log("CHANGED ACTIVE OBJECT TO: " + activeObject.name);
+
+
     }
 
     public void SetVisibilityOfObject(bool state)

@@ -17,7 +17,7 @@ public class PlayerBehaviour : MonoBehaviour
     [SerializeField]
     Text selectButtonText;
 
-    bool isSelect = true;
+    bool isSelect = false;
     bool showGUI = false;
     string commentText = "";
     TextMeshPro commentTextMesh = null;
@@ -70,6 +70,14 @@ public class PlayerBehaviour : MonoBehaviour
 
     private Rootobject rootObject;
 
+    [SerializeField]
+    Button deploy1;
+
+    [SerializeField]
+    Button deploy2;
+
+    private int deployInt = 0;
+
     // Start is called before the first frame update
     void Start()
     {
@@ -96,6 +104,7 @@ public class PlayerBehaviour : MonoBehaviour
             funcGO = Instantiate(funcPrefab, new Vector3(0, 0, 0), Quaternion.identity);
             funcGO.GetComponent<FunctionalityBehaviour>().http = GameObject.Find("HttpObject").GetComponent<HttpBehaviour>();
             funcGO.GetComponent<FunctionalityBehaviour>().root = rootObject;
+            funcGO.GetComponent<FunctionalityBehaviour>().stateNumber = funcObjects.Count;
 
             LineBehaviour lb = FindObjectOfType<LineBehaviour>();
             lb.SetGradientToDeployColors();
@@ -228,8 +237,18 @@ public class PlayerBehaviour : MonoBehaviour
             }
             else
             {
-                // Set new to active and change the state
-                VariabilityHandler handler = go.GetComponentInParent<VariabilityHandler>();
+                // Set new to active and change the state.
+                VariabilityHandler handler;
+                if (go.GetComponentInParent<ActionTest>() != null)
+                {
+                   handler = GameObject.Find(deployInt + "Action").GetComponent<VariabilityHandler>();
+                }
+                else
+                {
+                    handler = GameObject.Find(deployInt + "Sensor").GetComponent<VariabilityHandler>();
+                }
+                
+                
                 handler.SetAllStatesToNormal();
                 handler.SetObjectToActive(go.name);
                 timerComment = 2f;
@@ -363,5 +382,15 @@ public class PlayerBehaviour : MonoBehaviour
         {
             selectButtonText.text = "LOOK";
         }
+    }
+
+    public void Deploy1()
+    {
+        deployInt = 0;
+    }
+
+    public void Deploy2()
+    {
+        deployInt = 1;
     }
 }

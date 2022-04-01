@@ -18,16 +18,23 @@ public class FunctionalityBehaviour : MonoBehaviour
     private VariabilityHandler variabilityTrigger;
     private VariabilityHandler variabilityAction;
 
+    private GameObject variabilityTriggerObject;
+    private GameObject variabilityActionObject;
+
     private bool shouldOnlyRunOnce = false;
     private string lightMode = "";
+
+    public int stateNumber;
 
     // Start is called before the first frame update
     void Start()
     {
+        Debug.Log($"STATE NUMBER WAS {stateNumber}");
+
         vh = GameObject.Find("VariabilityHolder").GetComponent<VariabilityHolder>();
 
-        variabilityTrigger = vh.GetSensor().GetComponent<VariabilityHandler>();
-        variabilityAction = vh.GetAction().GetComponent<VariabilityHandler>();
+        variabilityTrigger = GameObject.Find(stateNumber.ToString() + "Sensor").GetComponent<VariabilityHandler>();
+        variabilityAction = GameObject.Find(stateNumber.ToString() + "Action").GetComponent<VariabilityHandler>();
     }
 
     // Update is called once per frame
@@ -35,14 +42,14 @@ public class FunctionalityBehaviour : MonoBehaviour
     {
         if(root != null)
         {
-            if (!variabilityAction.GetActiveStateOfObject() && root.action.includeVariability)
+            if (!vh.GetActiveStateOfAction() && root.action.includeVariability)
             {
-                variabilityAction.SetVisibilityOfObject(true);
+                vh.SetActionToActive();
             }
 
-            if (!variabilityTrigger.GetActiveStateOfObject() && root.trigger.includeVariability)
+            if (!vh.GetActiveStateOfSensor() && root.trigger.includeVariability)
             {
-                variabilityTrigger.SetVisibilityOfObject(true);
+                vh.SetSensorToActive();
             }
 
             if(!shouldOnlyRunOnce)
@@ -86,7 +93,7 @@ public class FunctionalityBehaviour : MonoBehaviour
         {
             if (retrieveStateOfTrigger() == triggerVal)
             {
-                if (root.trigger.includeVariability)
+                if (root.trigger.includeVariability && variabilityTrigger.GetActiveObject() != null)
                 {
                     string activeObjectName = variabilityTrigger.GetActiveObject().name;
                     float triggerTimer = 0f;
@@ -175,6 +182,7 @@ public class FunctionalityBehaviour : MonoBehaviour
 
     void setStateOfAction()
     {
+        Debug.Log(root.action.state + " " + root.action.value + " " + lightMode);
         StartCoroutine(http.ChangeLightState(root.action.state, root.action.value, lightMode));
     }
 }

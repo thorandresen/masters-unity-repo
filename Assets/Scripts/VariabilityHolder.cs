@@ -25,6 +25,26 @@ public class VariabilityHolder : MonoBehaviour
         return sensorParent;
     }
 
+    public void SetSensorToActive()
+    {
+        sensorParent.SetActive(true);
+    }
+
+    public void SetActionToActive()
+    {
+        actionParent.SetActive(true);
+    }
+
+    public bool GetActiveStateOfSensor()
+    {
+        return sensorParent.activeSelf;
+    }
+
+    public bool GetActiveStateOfAction()
+    {
+        return actionParent.activeSelf;
+    }
+
     public GameObject GetAction()
     {
         return actionParent;
