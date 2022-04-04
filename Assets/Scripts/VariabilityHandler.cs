@@ -41,8 +41,6 @@ public class VariabilityHandler : MonoBehaviour
         activeObject = choices.Where(x => x.name == name).FirstOrDefault();
         activeObject.GetComponent<MeshRenderer>().material = active;
         Debug.Log("CHANGED ACTIVE OBJECT TO: " + activeObject.name);
-
-
     }
 
     public void SetVisibilityOfObject(bool state)
@@ -58,5 +56,14 @@ public class VariabilityHandler : MonoBehaviour
     public GameObject GetActiveObject()
     {
         return activeObject;
+    }
+
+    public void SetAllStatesToNormalAndActiveObjectToActive()
+    {
+        foreach (var state in choices)
+        {
+            state.GetComponent<MeshRenderer>().material = normal;
+        }
+        activeObject.GetComponent<MeshRenderer>().material = active;
     }
 }

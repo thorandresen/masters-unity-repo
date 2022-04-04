@@ -363,6 +363,14 @@ public class PlayerBehaviour : MonoBehaviour
             deployButton.gameObject.SetActive(false);
             deployOverwriteButton.gameObject.SetActive(false);
         }
+
+        if(funcObjects.Count == 1 )
+        {
+            deploy1.gameObject.SetActive(true);
+        }
+        else if (funcObjects.Count == 2) {
+            deploy2.gameObject.SetActive(true);
+        }
     }
 
     private float map(float x, float in_min, float in_max, float out_min, float out_max)
@@ -387,10 +395,20 @@ public class PlayerBehaviour : MonoBehaviour
     public void Deploy1()
     {
         deployInt = 0;
+        VariabilityHandler handler1 = GameObject.Find(deployInt + "Action").GetComponent<VariabilityHandler>();
+        VariabilityHandler handler2 = GameObject.Find(deployInt + "Sensor").GetComponent<VariabilityHandler>();
+
+        handler1.SetAllStatesToNormalAndActiveObjectToActive();
+        handler2.SetAllStatesToNormalAndActiveObjectToActive();
     }
 
     public void Deploy2()
     {
         deployInt = 1;
+        VariabilityHandler handler1 = GameObject.Find(deployInt + "Action").GetComponent<VariabilityHandler>();
+        VariabilityHandler handler2 = GameObject.Find(deployInt + "Sensor").GetComponent<VariabilityHandler>();
+
+        handler1.SetAllStatesToNormalAndActiveObjectToActive();
+        handler2.SetAllStatesToNormalAndActiveObjectToActive();
     }
 }
