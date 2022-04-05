@@ -15,7 +15,13 @@ public class PlayerBehaviour : MonoBehaviour
     RaycastHit lastHitComment = new RaycastHit();
 
     [SerializeField]
-    Text selectButtonText;
+    Image selectButtonImage;
+
+    [SerializeField]
+    Sprite selectSprite;
+
+    [SerializeField]
+    Sprite lookSprite;
 
     bool isSelect = false;
     bool showGUI = false;
@@ -290,7 +296,7 @@ public class PlayerBehaviour : MonoBehaviour
         try
         {
             rootObject = JsonConvert.DeserializeObject<Rootobject>(data);
-            incomingText = rootObject.comment.text;
+            incomingText = $"{rootObject.comment.text}\n \nIF: {rootObject.trigger.state} {rootObject.trigger.operatorType} {rootObject.trigger.value}\n \nSET: {rootObject.action.state} TO: {rootObject.action.value}";
             deployUI = true;
         }
         catch (Exception e)
@@ -306,6 +312,8 @@ public class PlayerBehaviour : MonoBehaviour
 
     public void SpawnAndOverwritePrefab()
     {
+        deploy1.gameObject.SetActive(false);
+        deploy2.gameObject.SetActive(false);
         funcObjects.All(x => { Destroy(x); return true; });
         funcObjects.Clear();
         spawnPrefab = true;
@@ -384,16 +392,18 @@ public class PlayerBehaviour : MonoBehaviour
 
         if(isSelect)
         {
-            selectButtonText.text = "SELECT";
+            selectButtonImage.sprite = selectSprite;
         } 
         else
         {
-            selectButtonText.text = "LOOK";
+            selectButtonImage.sprite = lookSprite;
         }
     }
 
     public void Deploy1()
     {
+        deploy1.image.color = Color.red;
+        deploy2.image.color = Color.white;
         deployInt = 0;
         VariabilityHandler handler1 = GameObject.Find(deployInt + "Action").GetComponent<VariabilityHandler>();
         VariabilityHandler handler2 = GameObject.Find(deployInt + "Sensor").GetComponent<VariabilityHandler>();
@@ -404,6 +414,8 @@ public class PlayerBehaviour : MonoBehaviour
 
     public void Deploy2()
     {
+        deploy1.image.color = Color.white;
+        deploy2.image.color = Color.red;
         deployInt = 1;
         VariabilityHandler handler1 = GameObject.Find(deployInt + "Action").GetComponent<VariabilityHandler>();
         VariabilityHandler handler2 = GameObject.Find(deployInt + "Sensor").GetComponent<VariabilityHandler>();
