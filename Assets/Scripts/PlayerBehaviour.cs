@@ -84,6 +84,11 @@ public class PlayerBehaviour : MonoBehaviour
 
     private int deployInt = 0;
 
+    private List<string> incomingTexts = new List<string>();
+
+    private float pauseTimer = 0f;
+    bool w = false;
+    bool s = false;
     // Start is called before the first frame update
     void Start()
     {
@@ -96,8 +101,19 @@ public class PlayerBehaviour : MonoBehaviour
     // Update is called once per frame
     void FixedUpdate()
     {
-        bool w = HandleGazeSelection();
-        bool s = HandleVariability();
+        
+        if (pauseTimer <= 0f)
+        {
+            w = HandleGazeSelection();
+            s = HandleVariability();
+        }
+        else
+        {
+            w = false;
+            s = false;
+            pauseTimer -= Time.deltaTime;
+        }
+        
         HandleObjectUI();
 
         if(!w && !s)
@@ -121,8 +137,18 @@ public class PlayerBehaviour : MonoBehaviour
             updateCommenText = true;
             spawnPrefab = false;
             deployUI = false;
+            incomingTexts.Add(incomingText);
 
             funcObjects.Add(funcGO);
+
+            if(funcObjects.Count() > 1)
+            {
+                Deploy2();
+            }
+            else
+            {
+                Deploy1();
+            }
         }
     }
 
@@ -160,6 +186,7 @@ public class PlayerBehaviour : MonoBehaviour
                 loadingImage.fillAmount = 0f;
                 gameObjects.Add(go);
                 timer = 2f;
+                pauseTimer = 1f;
 
                 if (gameObjects.Count == 2)
                 {
@@ -258,6 +285,7 @@ public class PlayerBehaviour : MonoBehaviour
                 handler.SetAllStatesToNormal();
                 handler.SetObjectToActive(go.name);
                 timerComment = 2f;
+                pauseTimer = 1f;
 
             }
             return true;
@@ -338,18 +366,18 @@ public class PlayerBehaviour : MonoBehaviour
   
         }
 
-        if(gameObjects.Count == 2 && !UIbool)
-        {
-            if (GUI.Button(new Rect(1100, 10, 200, 120), "SEND"))
-            {
-                var data = new Dictionary<string, object>();
-                data.Add("comment", commentText);
+        //if(gameObjects.Count == 2 && !UIbool)
+        //{
+        //    if (GUI.Button(new Rect(1100, 10, 200, 120), "SEND"))
+        //    {
+        //        var data = new Dictionary<string, object>();
+        //        data.Add("comment", commentText);
 
-                json = Newtonsoft.Json.JsonConvert.SerializeObject(data);
-                StartCoroutine(_http.SendDataToAPI(json));
-                UIbool = true;
-            }
-        }
+        //        json = Newtonsoft.Json.JsonConvert.SerializeObject(data);
+        //        StartCoroutine(_http.SendDataToAPI(json));
+        //        UIbool = true;
+        //    }
+        //}
 
         if(updateCommenText)
         {
@@ -407,6 +435,9 @@ public class PlayerBehaviour : MonoBehaviour
         deployInt = 0;
         VariabilityHandler handler1 = GameObject.Find(deployInt + "Action").GetComponent<VariabilityHandler>();
         VariabilityHandler handler2 = GameObject.Find(deployInt + "Sensor").GetComponent<VariabilityHandler>();
+        incomingText = incomingTexts[deployInt];
+        updateCommenText = true;
+
 
         handler1.SetAllStatesToNormalAndActiveObjectToActive();
         handler2.SetAllStatesToNormalAndActiveObjectToActive();
@@ -419,6 +450,9 @@ public class PlayerBehaviour : MonoBehaviour
         deployInt = 1;
         VariabilityHandler handler1 = GameObject.Find(deployInt + "Action").GetComponent<VariabilityHandler>();
         VariabilityHandler handler2 = GameObject.Find(deployInt + "Sensor").GetComponent<VariabilityHandler>();
+        incomingText = incomingTexts[deployInt];
+        updateCommenText = true;
+
 
         handler1.SetAllStatesToNormalAndActiveObjectToActive();
         handler2.SetAllStatesToNormalAndActiveObjectToActive();
