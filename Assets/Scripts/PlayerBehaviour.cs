@@ -251,7 +251,7 @@ public class PlayerBehaviour : MonoBehaviour
         {
             GameObject go = hit.collider.gameObject;
 
-            if (!go.CompareTag("isTargetable") || gameObjects.Contains(go))
+            if (!go.CompareTag("isTargetable") || gameObjects.Contains(go) || go.GetComponent<VariabilityStateHandler>().GetActiveState())
             {
                 // Stop timers, reset lasthit
                 timerComment = 2f;
@@ -281,12 +281,10 @@ public class PlayerBehaviour : MonoBehaviour
                     handler = GameObject.Find(deployInt + "Sensor").GetComponent<VariabilityHandler>();
                 }
                 
-                
                 handler.SetAllStatesToNormal();
                 handler.SetObjectToActive(go.name);
                 timerComment = 2f;
                 pauseTimer = 1f;
-
             }
             return true;
         }

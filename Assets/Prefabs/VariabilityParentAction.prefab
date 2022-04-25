@@ -323,6 +323,7 @@ GameObject:
   - component: {fileID: 1147162911956321367}
   - component: {fileID: 1147162911956321366}
   - component: {fileID: 1147162911956321365}
+  - component: {fileID: 9087691304167509686}
   m_Layer: 6
   m_Name: 5
   m_TagString: isTargetable
@@ -408,6 +409,18 @@ MeshCollider:
   m_Convex: 0
   m_CookingOptions: 30
   m_Mesh: {fileID: 10210, guid: 0000000000000000e000000000000000, type: 0}
+--- !u!114 &9087691304167509686
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1147162911956321371}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b527bc41e91d6744fbe3011e3bedaa93, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &1147162912152903312
 GameObject:
   m_ObjectHideFlags: 0
@@ -518,6 +531,7 @@ GameObject:
   - component: {fileID: 1147162912316886248}
   - component: {fileID: 1147162912316886255}
   - component: {fileID: 1147162912316886254}
+  - component: {fileID: 4157813329374370369}
   m_Layer: 6
   m_Name: 3
   m_TagString: isTargetable
@@ -616,6 +630,18 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1147162912316886252}
   m_CullTransparentMesh: 1
+--- !u!114 &4157813329374370369
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1147162912316886252}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b527bc41e91d6744fbe3011e3bedaa93, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &1147162912333658206
 GameObject:
   m_ObjectHideFlags: 0
@@ -1314,6 +1340,7 @@ GameObject:
   - component: {fileID: 1147162913035113581}
   - component: {fileID: 1147162913035113580}
   - component: {fileID: 1147162913035113491}
+  - component: {fileID: 4467468514993941309}
   m_Layer: 6
   m_Name: 1
   m_TagString: isTargetable
@@ -1399,3 +1426,15 @@ MeshCollider:
   m_Convex: 0
   m_CookingOptions: 30
   m_Mesh: {fileID: 10210, guid: 0000000000000000e000000000000000, type: 0}
+--- !u!114 &4467468514993941309
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1147162913035113489}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b527bc41e91d6744fbe3011e3bedaa93, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 

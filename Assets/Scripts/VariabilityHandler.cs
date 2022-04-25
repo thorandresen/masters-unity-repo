@@ -20,6 +20,7 @@ public class VariabilityHandler : MonoBehaviour
     void Start()
     {
         activeObject = choices[0];
+        choices[0].GetComponent<VariabilityStateHandler>().SetActiveState(true);
     }
 
     // Update is called once per frame
@@ -33,6 +34,7 @@ public class VariabilityHandler : MonoBehaviour
         foreach (var state in choices)
         {
             state.GetComponent<MeshRenderer>().material = normal;
+            state.GetComponent<VariabilityStateHandler>().SetActiveState(false);
         }
     }
 
@@ -40,6 +42,7 @@ public class VariabilityHandler : MonoBehaviour
     {
         activeObject = choices.Where(x => x.name == name).FirstOrDefault();
         activeObject.GetComponent<MeshRenderer>().material = active;
+        activeObject.GetComponent<VariabilityStateHandler>().SetActiveState(true);
         Debug.Log("CHANGED ACTIVE OBJECT TO: " + activeObject.name);
     }
 
@@ -63,7 +66,9 @@ public class VariabilityHandler : MonoBehaviour
         foreach (var state in choices)
         {
             state.GetComponent<MeshRenderer>().material = normal;
+            state.GetComponent<VariabilityStateHandler>().SetActiveState(false);
         }
         activeObject.GetComponent<MeshRenderer>().material = active;
+        activeObject.GetComponent<VariabilityStateHandler>().SetActiveState(true);
     }
 }
