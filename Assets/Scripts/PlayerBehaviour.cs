@@ -30,7 +30,7 @@ public class PlayerBehaviour : MonoBehaviour
 
     float timer = 2f;
     float timerComment = 2f;
-    List<GameObject> gameObjects = new List<GameObject>();
+    public List<GameObject> gameObjects = new List<GameObject>();
 
     string json;
     bool UIbool = false;
@@ -85,10 +85,15 @@ public class PlayerBehaviour : MonoBehaviour
     private int deployInt = 0;
 
     private List<string> incomingTexts = new List<string>();
+    private string incomingTextName;
 
     private float pauseTimer = 0f;
     bool w = false;
     bool s = false;
+
+    bool deploy1Name = false;
+    bool deploy2Name = false;
+
     // Start is called before the first frame update
     void Start()
     {
@@ -135,20 +140,22 @@ public class PlayerBehaviour : MonoBehaviour
             ldb.SetActiveStateOfLink(true);
             commentTextMesh = GameObject.Find("LinkText").GetComponent<TextMeshPro>();
             updateCommenText = true;
-            spawnPrefab = false;
             deployUI = false;
             incomingTexts.Add(incomingText);
-
             funcObjects.Add(funcGO);
 
             if(funcObjects.Count() > 1)
             {
                 Deploy2();
+                deploy2Name = true;
             }
             else
             {
                 Deploy1();
+                deploy1Name = true;
             }
+
+            spawnPrefab = false;
         }
     }
 
@@ -322,7 +329,8 @@ public class PlayerBehaviour : MonoBehaviour
         try
         {
             rootObject = JsonConvert.DeserializeObject<Rootobject>(data);
-            incomingText = $"{rootObject.comment.text}\n \nIF: {rootObject.trigger.state} {rootObject.trigger.operatorType} {rootObject.trigger.value}\n \nSET: {rootObject.action.state} TO: {rootObject.action.value}";
+            incomingText = $"{rootObject.comment.text}\n \nHVIS: {rootObject.trigger.state} {rootObject.trigger.operatorType} {rootObject.trigger.value}\n \nSÆT: {rootObject.action.state} TIL: {rootObject.action.value}";
+            incomingTextName = rootObject.comment.name;
             deployUI = true;
         }
         catch (Exception e)
@@ -343,6 +351,14 @@ public class PlayerBehaviour : MonoBehaviour
         funcObjects.All(x => { Destroy(x); return true; });
         funcObjects.Clear();
         spawnPrefab = true;
+    }
+
+    public void DestroyPrefabs()
+    {
+        deploy1.gameObject.SetActive(false);
+        deploy2.gameObject.SetActive(false);
+        funcObjects.All(x => { Destroy(x); return true; });
+        funcObjects.Clear();
     }
 
     private void OnGUI()
@@ -383,7 +399,7 @@ public class PlayerBehaviour : MonoBehaviour
             updateCommenText = false;
         }
 
-        if(deployUI)
+        if(deployUI && gameObjects.Count() == 2)
         {
             if(funcObjects.Any())
             {
@@ -396,14 +412,27 @@ public class PlayerBehaviour : MonoBehaviour
         {
             deployButton.gameObject.SetActive(false);
             deployOverwriteButton.gameObject.SetActive(false);
+            deployUI = false;
         }
 
         if(funcObjects.Count == 1 )
         {
-            deploy1.gameObject.SetActive(true);
+            deploy1.gameObject.SetActive(true);    
         }
         else if (funcObjects.Count == 2) {
             deploy2.gameObject.SetActive(true);
+        }
+
+        if(deploy1Name)
+        {
+            deploy1.GetComponentInChildren<Text>().text = incomingTextName;
+            deploy1Name = false;
+        }
+
+        if (deploy2Name)
+        {
+            deploy2.GetComponentInChildren<Text>().text = incomingTextName;
+            deploy2Name = false;
         }
     }
 

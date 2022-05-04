@@ -20,6 +20,9 @@ public class RecordHandler : MonoBehaviour
     [SerializeField]
     GameObject cancelButton;
 
+    [SerializeField]
+    PlayerBehaviour pb;
+
     bool isRecording = false;
 
     // Start is called before the first frame update
@@ -36,6 +39,10 @@ public class RecordHandler : MonoBehaviour
 
     public void ToggleRecord()
     {
+        if(pb.gameObjects.Count < 2)
+        {
+            // TODO: Fix en boks der siger du skal have markeret to gameobjects før du recorder.
+        }
         if(isRecording)
         {
             StartRecord();
