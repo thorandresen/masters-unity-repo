@@ -75,6 +75,7 @@ public class PlayerBehaviour : MonoBehaviour
     private GameObject deployText;
 
     private Rootobject rootObject;
+    private List<Rootobject> mutliRootObject;
 
     [SerializeField]
     Button deploy1;
@@ -126,6 +127,8 @@ public class PlayerBehaviour : MonoBehaviour
             loadingImage.fillAmount = 0f;
         }
 
+
+        // TODO: HANDLE MULTIROOTOBJECT TO SPAWN MORE OBJECTS ON DEPLOY.
         if(spawnPrefab)
         {
             funcGO = Instantiate(funcPrefab, new Vector3(0, 0, 0), Quaternion.identity);
@@ -141,7 +144,7 @@ public class PlayerBehaviour : MonoBehaviour
             commentTextMesh = GameObject.Find("LinkText").GetComponent<TextMeshPro>();
             updateCommenText = true;
             deployUI = false;
-            incomingTexts.Add(incomingText);
+            incomingTexts.Add($"{rootObject.comment.text}");
             funcObjects.Add(funcGO);
 
             if(funcObjects.Count() > 1)
@@ -328,10 +331,25 @@ public class PlayerBehaviour : MonoBehaviour
     {
         try
         {
-            rootObject = JsonConvert.DeserializeObject<Rootobject>(data);
-            incomingText = $"{rootObject.comment.text}\n \nHVIS: {rootObject.trigger.state} {rootObject.trigger.operatorType} {rootObject.trigger.value}\n \nSÆT: {rootObject.action.state} TIL: {rootObject.action.value}";
-            incomingTextName = rootObject.comment.name;
-            deployUI = true;
+            try
+            {
+                rootObject = JsonConvert.DeserializeObject<Rootobject>(data);
+                incomingText = $"{rootObject.comment.text}";
+                incomingTextName = rootObject.comment.name;
+                deployUI = true;
+            }
+            catch (Exception e)
+            {
+                mutliRootObject = JsonConvert.DeserializeObject<List<Rootobject>>(data);
+                incomingText = $"KODE 1: \n {mutliRootObject[0].comment.text} \n -------------- \n KODE 2: \n {mutliRootObject[1].comment.text}";
+                incomingTextName = $"{mutliRootObject[0].comment.name} & {mutliRootObject[1].comment.name}";
+                deployUI = true;
+            }
+            
+            //incomingText = $"{rootObject.comment.text}\n \nHVIS: {rootObject.trigger.state} {rootObject.trigger.operatorType} {rootObject.trigger.value}\n \nSÆT: {rootObject.action.state} TIL: {rootObject.action.value}";
+            //incomingText = $"{rootObject.comment.text}";
+            //incomingTextName = rootObject.comment.name;
+            //deployUI = true;
         }
         catch (Exception e)
         {
