@@ -12,6 +12,7 @@ public class LineDrawBehaviour : MonoBehaviour
     GameObject linkPrefab;
 
     GameObject localLink;
+    GameObject localLink2;
 
     //// TEST OBJECTS
     //[SerializeField]
@@ -36,8 +37,11 @@ public class LineDrawBehaviour : MonoBehaviour
     {
         LineRenderer localLine = Instantiate(linePrefab, transform.position, Quaternion.identity);
 
-        localLink = CreateLink(obj1, obj2);
-        SetActiveStateOfLink(false);
+        localLink = CreateLink(obj1, obj2, 0.4f);
+        localLink2 = CreateLink(obj1, obj2, 0.6f);
+        localLink2.name = "LinkPrefab2(Clone)";
+
+        SetActiveStateOfAllLinks(false);
 
         localLine.SetPosition(0, obj1.transform.position);
         localLine.SetPosition(1, localLink.transform.position);
@@ -47,13 +51,18 @@ public class LineDrawBehaviour : MonoBehaviour
         localLine.GetComponent<LineBehaviour>().SetGameObjects(obj1, obj2, localLink);
     }
 
-    private GameObject CreateLink(GameObject obj1, GameObject obj2)
+    private GameObject CreateLink(GameObject obj1, GameObject obj2, float pos)
     {
-        return Instantiate(linkPrefab, Vector3.Lerp(obj1.transform.position, obj2.transform.position, 0.5f), Quaternion.identity);
+        return Instantiate(linkPrefab, Vector3.Lerp(obj1.transform.position, obj2.transform.position, pos), Quaternion.identity);
     }
 
     public void SetActiveStateOfLink(bool state)
     {
         localLink.SetActive(state);
+    }
+    public void SetActiveStateOfAllLinks(bool state)
+    {
+        localLink.SetActive(state);
+        localLink2.SetActive(state);
     }
 }

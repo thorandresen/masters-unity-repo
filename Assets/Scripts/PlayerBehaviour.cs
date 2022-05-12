@@ -83,10 +83,31 @@ public class PlayerBehaviour : MonoBehaviour
     [SerializeField]
     Button deploy2;
 
+    [SerializeField]
+    GameObject deployParent;
+
+    private List<ExplainDTO> explainObjects = new List<ExplainDTO>();
+
+    [SerializeField]
+    List<TextMeshPro> ExplainNames;
+
+    [SerializeField]
+    List<SpriteRenderer> ExplainCogwheels;
+
+    [SerializeField]
+    Sprite cogwheelOrange;
+
+    [SerializeField]
+    Sprite cogwheelPurple;
+
+    [SerializeField]
+    List<Material> LinkCommenMaterials;
+
     private int deployInt = 0;
 
     private List<string> incomingTexts = new List<string>();
     private string incomingTextName;
+    private List<string> incomingTextNames = new List<string>();
 
     private float pauseTimer = 0f;
     bool w = false;
@@ -98,6 +119,18 @@ public class PlayerBehaviour : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
+        explainObjects.Add(new ExplainDTO
+        {
+            Name = ExplainNames[0],
+            Cogwheel = ExplainCogwheels[0]
+        });
+
+        explainObjects.Add(new ExplainDTO
+        {
+            Name = ExplainNames[1],
+            Cogwheel = ExplainCogwheels[1]
+        });
+
         bulbImage = objectUIs[0];
         motionImage = objectUIs[1];
         bulbImage.SetActive(false);
@@ -128,34 +161,101 @@ public class PlayerBehaviour : MonoBehaviour
         }
 
 
-        // TODO: HANDLE MULTIROOTOBJECT TO SPAWN MORE OBJECTS ON DEPLOY.
         if(spawnPrefab)
+        {
+            deployParent.SetActive(true);
+
+            if(rootObject != null)
+            {
+                SpawnSingleFuncObject();
+            }
+            else if (mutliRootObject != null)
+            {
+                SpawnMultiFuncObjects();
+            }
+        }
+    }
+
+    private void SpawnSingleFuncObject()
+    {
+        spawnPrefab = false;
+        funcGO = Instantiate(funcPrefab, new Vector3(0, 0, 0), Quaternion.identity);
+        funcGO.GetComponent<FunctionalityBehaviour>().http = GameObject.Find("HttpObject").GetComponent<HttpBehaviour>();
+        funcGO.GetComponent<FunctionalityBehaviour>().root = rootObject;
+        funcGO.GetComponent<FunctionalityBehaviour>().stateNumber = funcObjects.Count;
+
+        LineBehaviour lb = FindObjectOfType<LineBehaviour>();
+        lb.SetGradientToDeployColors();
+
+        LineDrawBehaviour ldb = FindObjectOfType<LineDrawBehaviour>();
+        ldb.SetActiveStateOfLink(true);
+        commentTextMesh = GameObject.Find("LinkText").GetComponent<TextMeshPro>();
+        updateCommenText = true;
+        deployUI = false;
+        incomingTexts.Add($"{rootObject.comment.text}");
+        incomingTextNames.Add(incomingTextName);
+        funcObjects.Add(funcGO);
+
+        if (funcObjects.Count() > 1)
+        {
+            ldb.SetActiveStateOfAllLinks(true);
+            var test = GameObject.Find("LinkPrefab2(Clone)").GetComponentInChildren<TextMeshPro>();
+            test.text = rootObject.comment.text;
+            deploy2Name = true;
+            deploy2.GetComponentInChildren<Text>().text = incomingTextName;
+            Deploy2();
+
+        }
+        else
+        {
+            var test = GameObject.Find("LinkPrefab(Clone)").GetComponentInChildren<TextMeshPro>();
+            test.text = rootObject.comment.text;
+            deploy1Name = true;
+            deploy1.GetComponentInChildren<Text>().text = incomingTextName;
+            Deploy1();
+        }
+
+        //spawnPrefab = false;
+    }
+
+    private void SpawnMultiFuncObjects()
+    {
+        foreach (var tempRootObject in mutliRootObject)
         {
             funcGO = Instantiate(funcPrefab, new Vector3(0, 0, 0), Quaternion.identity);
             funcGO.GetComponent<FunctionalityBehaviour>().http = GameObject.Find("HttpObject").GetComponent<HttpBehaviour>();
-            funcGO.GetComponent<FunctionalityBehaviour>().root = rootObject;
+            funcGO.GetComponent<FunctionalityBehaviour>().root = tempRootObject;
             funcGO.GetComponent<FunctionalityBehaviour>().stateNumber = funcObjects.Count;
 
             LineBehaviour lb = FindObjectOfType<LineBehaviour>();
             lb.SetGradientToDeployColors();
 
             LineDrawBehaviour ldb = FindObjectOfType<LineDrawBehaviour>();
-            ldb.SetActiveStateOfLink(true);
+            ldb.SetActiveStateOfAllLinks(true);
             commentTextMesh = GameObject.Find("LinkText").GetComponent<TextMeshPro>();
             updateCommenText = true;
             deployUI = false;
-            incomingTexts.Add($"{rootObject.comment.text}");
+            incomingTexts.Add($"{tempRootObject.comment.text}");
+            incomingTextName = tempRootObject.comment.name;
+            incomingTextNames.Add(tempRootObject.comment.name);
             funcObjects.Add(funcGO);
 
-            if(funcObjects.Count() > 1)
+            if (funcObjects.Count() > 1)
             {
+                var test = GameObject.Find("LinkPrefab2(Clone)").GetComponentInChildren<TextMeshPro>();
+                test.text = tempRootObject.comment.text;
                 Deploy2();
                 deploy2Name = true;
+                deploy2.GetComponentInChildren<Text>().text = incomingTextName;
+                
             }
             else
             {
+                var test = GameObject.Find("LinkPrefab(Clone)").GetComponentInChildren<TextMeshPro>();
+                test.text = tempRootObject.comment.text;
                 Deploy1();
                 deploy1Name = true;
+                deploy1.GetComponentInChildren<Text>().text = incomingTextName;
             }
 
             spawnPrefab = false;
@@ -340,8 +440,9 @@ public class PlayerBehaviour : MonoBehaviour
             }
             catch (Exception e)
             {
+                rootObject = null;
                 mutliRootObject = JsonConvert.DeserializeObject<List<Rootobject>>(data);
-                incomingText = $"KODE 1: \n {mutliRootObject[0].comment.text} \n -------------- \n KODE 2: \n {mutliRootObject[1].comment.text}";
+                incomingText = $"<b>KODE 1:</b> \n {mutliRootObject[0].comment.text} \n \n <b>KODE 2:</b> \n {mutliRootObject[1].comment.text}";
                 incomingTextName = $"{mutliRootObject[0].comment.name} & {mutliRootObject[1].comment.name}";
                 deployUI = true;
             }
@@ -411,11 +512,11 @@ public class PlayerBehaviour : MonoBehaviour
         //    }
         //}
 
-        if(updateCommenText)
-        {
-            commentTextMesh.text = incomingText;
-            updateCommenText = false;
-        }
+        //if(updateCommenText)
+        //{
+        //    commentTextMesh.text = incomingText;
+        //    updateCommenText = false;
+        //}
 
         if(deployUI && gameObjects.Count() == 2)
         {
@@ -433,25 +534,26 @@ public class PlayerBehaviour : MonoBehaviour
             deployUI = false;
         }
 
-        if(funcObjects.Count == 1 )
+        if(funcObjects.Count == 1)
         {
             deploy1.gameObject.SetActive(true);    
         }
         else if (funcObjects.Count == 2) {
+            deploy1.gameObject.SetActive(true);
             deploy2.gameObject.SetActive(true);
         }
 
-        if(deploy1Name)
-        {
-            deploy1.GetComponentInChildren<Text>().text = incomingTextName;
-            deploy1Name = false;
-        }
+        //if(deploy1Name)
+        //{
+        //    deploy1.GetComponentInChildren<Text>().text = incomingTextName;
+        //    deploy1Name = false;
+        //}
 
-        if (deploy2Name)
-        {
-            deploy2.GetComponentInChildren<Text>().text = incomingTextName;
-            deploy2Name = false;
-        }
+        //if (deploy2Name)
+        //{
+        //    deploy2.GetComponentInChildren<Text>().text = incomingTextName;
+        //    deploy2Name = false;
+        //}
     }
 
     private float map(float x, float in_min, float in_max, float out_min, float out_max)
@@ -475,7 +577,7 @@ public class PlayerBehaviour : MonoBehaviour
 
     public void Deploy1()
     {
-        deploy1.image.color = Color.red;
+        deploy1.image.color = Color.grey;
         deploy2.image.color = Color.white;
         deployInt = 0;
         VariabilityHandler handler1 = GameObject.Find(deployInt + "Action").GetComponent<VariabilityHandler>();
@@ -483,6 +585,19 @@ public class PlayerBehaviour : MonoBehaviour
         incomingText = incomingTexts[deployInt];
         updateCommenText = true;
 
+        if(incomingTextNames.Count != 0)
+        {
+            explainObjects[0].Name.text = incomingTextNames[0];
+            explainObjects[0].Cogwheel.sprite = cogwheelOrange;
+            explainObjects[1].Name.text = incomingTextNames[0];
+            explainObjects[1].Cogwheel.sprite = cogwheelOrange;
+        }
+
+        var linkPrefab = GameObject.Find("LinkPrefab(Clone)");
+        linkPrefab.GetComponent<MeshRenderer>().material = LinkCommenMaterials[1];
+
+        var linkPrefab2 = GameObject.Find("LinkPrefab2(Clone)");
+        linkPrefab2.GetComponent<MeshRenderer>().material = LinkCommenMaterials[0];
 
         handler1.SetAllStatesToNormalAndActiveObjectToActive();
         handler2.SetAllStatesToNormalAndActiveObjectToActive();
@@ -491,13 +606,26 @@ public class PlayerBehaviour : MonoBehaviour
     public void Deploy2()
     {
         deploy1.image.color = Color.white;
-        deploy2.image.color = Color.red;
+        deploy2.image.color = Color.grey;
         deployInt = 1;
         VariabilityHandler handler1 = GameObject.Find(deployInt + "Action").GetComponent<VariabilityHandler>();
         VariabilityHandler handler2 = GameObject.Find(deployInt + "Sensor").GetComponent<VariabilityHandler>();
         incomingText = incomingTexts[deployInt];
         updateCommenText = true;
 
+        if (incomingTextNames.Count != 0)
+        {
+        explainObjects[0].Name.text = incomingTextNames[1];
+        explainObjects[0].Cogwheel.sprite = cogwheelPurple;
+        explainObjects[1].Name.text = incomingTextNames[1];
+        explainObjects[1].Cogwheel.sprite = cogwheelPurple;
+        }
+
+        var linkPrefab = GameObject.Find("LinkPrefab(Clone)");
+        linkPrefab.GetComponent<MeshRenderer>().material = LinkCommenMaterials[0];
+
+        var linkPrefab2 = GameObject.Find("LinkPrefab2(Clone)");
+        linkPrefab2.GetComponent<MeshRenderer>().material = LinkCommenMaterials[2];
 
         handler1.SetAllStatesToNormalAndActiveObjectToActive();
         handler2.SetAllStatesToNormalAndActiveObjectToActive();
