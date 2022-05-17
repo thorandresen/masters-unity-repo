@@ -43,7 +43,7 @@ public class LightCubeBehaviour : MonoBehaviour
             }
             else
             {
-                text.text = "<b>Phillips Hue</b> \n" + "State: " + lightDict["on"].ToString() + " - Brightness: " + lightDict["bri"] + "\n" + "Hue: " + lightDict["hue"] + " - Warmth: " + lightDict["ct"];
+                text.text = "<b>On:</b> " + lightDict["on"].ToString() + " - <b>Bri:</b> " + lightDict["bri"] + "\n" + "<b>Hue:</b> " + lightDict["hue"] + " - <b>CT:</b> " + lightDict["ct"];
             }
 
             timer = 2f;

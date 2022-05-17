@@ -17,6 +17,9 @@ public class HttpServer : MonoBehaviour
 	[SerializeField]
 	PlayerBehaviour playerBehaviour;
 
+	[SerializeField]
+	TestBehaviour testBehaviour;
+
 	void Start()
 	{
 		listener = new HttpListener();
@@ -24,7 +27,7 @@ public class HttpServer : MonoBehaviour
 		listener.Prefixes.Add("http://127.0.0.1:4444/");
         //listener.Prefixes.Add("http://192.168.0.121:4444/"); // Tablet
         //listener.Prefixes.Add("http://192.168.0.190:4444/"); // Laursen
-        listener.Prefixes.Add("http://192.168.0.123:4444/"); // Labtools A22
+        //listener.Prefixes.Add("http://192.168.0.123:4444/"); // Labtools A22
         listener.AuthenticationSchemes = AuthenticationSchemes.Anonymous;
 		listener.Start();
 
@@ -56,13 +59,22 @@ public class HttpServer : MonoBehaviour
 				Debug.Log("Key: " + key + ", Value: " + context.Request.QueryString.GetValues(key)[0]);
 			}
 
+		Debug.Log(context.Request.Url.ToString());
+
 		if (context.Request.HttpMethod == "POST")
 		{
 			Thread.Sleep(1000);
 			string data_text = new StreamReader(context.Request.InputStream,
 								context.Request.ContentEncoding).ReadToEnd();
 
-			playerBehaviour.HandleIncomingObject(data_text);
+			if (context.Request.Url.ToString() == "http://127.0.0.1:4444/test" || context.Request.Url.ToString() == "http://192.168.0.123:4444/test")
+			{
+				testBehaviour.HandleIncomingTest(data_text);
+            } 
+			else
+            {
+				playerBehaviour.HandleIncomingObject(data_text);
+			}
 		}
 
 		context.Response.Close();
