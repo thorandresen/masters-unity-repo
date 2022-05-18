@@ -42,7 +42,7 @@ public class SensorCubeBehaviour : MonoBehaviour
             }
             else
             {
-                text.text = "<b>Motion Sensor</b> \n Presence: " + sensorDict["presence"] + "\n Light: " + sensorDict["light"] + " Temp: " + sensorDict["temp"];
+                text.text = "Presence: " + sensorDict["presence"] + "\nLight: " + sensorDict["light"] + " - Temp: " + sensorDict["temp"];
             }
             
             timer = 2f;

@@ -52,6 +52,7 @@ public class PlayerBehaviour : MonoBehaviour
 
     private GameObject bulbImage;
     private GameObject motionImage;
+    private GameObject requestButton;
 
     [SerializeField]
     FunctionalityBehaviour funcGameObject;
@@ -116,6 +117,8 @@ public class PlayerBehaviour : MonoBehaviour
     bool deploy1Name = false;
     bool deploy2Name = false;
 
+    bool requestButtonActive;
+
     // Start is called before the first frame update
     void Start()
     {
@@ -133,8 +136,10 @@ public class PlayerBehaviour : MonoBehaviour
 
         bulbImage = objectUIs[0];
         motionImage = objectUIs[1];
+        requestButton = objectUIs[3];
         bulbImage.SetActive(false);
         motionImage.SetActive(false);
+        requestButton.SetActive(false);
     }
 
     // Update is called once per frame
@@ -411,6 +416,12 @@ public class PlayerBehaviour : MonoBehaviour
         if (gameObjects.Contains(GameObject.Find("LightCube")))
         {
             bulbImage.SetActive(true);
+            if(!requestButtonActive)
+            {
+                requestButton.SetActive(true);
+                requestButtonActive = true;
+            }
+            
         }
     }
 

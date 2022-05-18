@@ -77,6 +77,14 @@ public class HttpServer : MonoBehaviour
 			}
 		}
 
+		if(context.Request.HttpMethod == "GET")
+        {
+			if (context.Request.Url.ToString() == "http://127.0.0.1:4444/resettest" || context.Request.Url.ToString() == "http://192.168.0.123:4444/resettest")
+			{
+				testBehaviour.ResetAllExtern();
+			}
+		}
+
 		context.Response.Close();
 	}
 }

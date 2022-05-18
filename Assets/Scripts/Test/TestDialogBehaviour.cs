@@ -1,7 +1,9 @@
 using Newtonsoft.Json;
 using System.Collections;
 using System.Collections.Generic;
+using System.Text;
 using UnityEngine;
+using UnityEngine.Networking;
 
 public class TestDialogBehaviour : MonoBehaviour
 {
@@ -42,7 +44,11 @@ public class TestDialogBehaviour : MonoBehaviour
             OnTest = on
         };
         var jsonString = JsonConvert.SerializeObject(testObject);
-        Debug.Log(jsonString);
+
+        //StartCoroutine(SendTestData(jsonString));
+        testBehaviour.HandleIncomingTest(jsonString);
+
+        this.gameObject.SetActive(false);
     }
 
     public void setBri(bool selected)
@@ -60,5 +66,29 @@ public class TestDialogBehaviour : MonoBehaviour
     public void setOn(bool selected)
     {
         on = selected;
+    }
+
+    public IEnumerator SendTestData(string json)
+    {
+        UnityWebRequest www;
+
+        //www.SetRequestHeader("Content-Type", "application/json");
+
+        www = new UnityWebRequest("http://192.168.0.246:5000/json", "POST");
+        byte[] bodyRaw = Encoding.UTF8.GetBytes(json);
+        www.uploadHandler = (UploadHandler)new UploadHandlerRaw(bodyRaw);
+        www.downloadHandler = (DownloadHandler)new DownloadHandlerBuffer();
+        www.SetRequestHeader("Content-Type", "application/json");
+
+        yield return www.SendWebRequest();
+
+        if (www.result != UnityWebRequest.Result.Success)
+        {
+            Debug.Log(www.error);
+        }
+        else
+        {
+            Debug.Log(www.result);
+        }
     }
 }
