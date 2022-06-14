@@ -51,6 +51,14 @@ public class TestDialogBehaviour : MonoBehaviour
         this.gameObject.SetActive(false);
     }
 
+    IEnumerator ExecuteAfterTime(float time, string jsonString)
+    {
+        yield return new WaitForSeconds(time);
+
+        // Code to execute after the delay
+        testBehaviour.HandleIncomingTest(jsonString);
+    }
+
     public void setBri(bool selected)
     {
         bri = selected;

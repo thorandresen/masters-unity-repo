@@ -26,7 +26,7 @@ public class HttpServer : MonoBehaviour
 		listener.Prefixes.Add("http://localhost:4444/");
 		listener.Prefixes.Add("http://127.0.0.1:4444/");
         //listener.Prefixes.Add("http://192.168.0.121:4444/"); // Tablet
-        //listener.Prefixes.Add("http://192.168.0.190:4444/"); // Laursen
+        listener.Prefixes.Add("http://192.168.0.190:4444/"); // Laursen
         //listener.Prefixes.Add("http://192.168.0.123:4444/"); // Labtools A22
         listener.AuthenticationSchemes = AuthenticationSchemes.Anonymous;
 		listener.Start();

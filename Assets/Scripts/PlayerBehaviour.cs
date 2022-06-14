@@ -225,6 +225,7 @@ public class PlayerBehaviour : MonoBehaviour
 
     private void SpawnMultiFuncObjects()
     {
+        incomingTextNames.Clear();
         foreach (var tempRootObject in mutliRootObject)
         {
             funcGO = Instantiate(funcPrefab, new Vector3(0, 0, 0), Quaternion.identity);
@@ -471,7 +472,18 @@ public class PlayerBehaviour : MonoBehaviour
 
     public void SpawnPrefab()
     {
-        spawnPrefab = true;
+        if(funcObjects.Count() == 2)
+        {
+            deploy1.gameObject.SetActive(false);
+            deploy2.gameObject.SetActive(false);
+            funcObjects.All(x => { Destroy(x); return true; });
+            funcObjects.Clear();
+            spawnPrefab = true;
+        } 
+        else
+        {
+            spawnPrefab = true;
+        }
     }
 
     public void SpawnAndOverwritePrefab()
@@ -531,10 +543,10 @@ public class PlayerBehaviour : MonoBehaviour
 
         if(deployUI && gameObjects.Count() == 2)
         {
-            if(funcObjects.Any())
-            {
-                deployOverwriteButton.gameObject.SetActive(true);
-            }
+            //if(funcObjects.Any())
+            //{
+            //    deployOverwriteButton.gameObject.SetActive(true);
+            //}
             deployButton.gameObject.SetActive(true);
             deployText.GetComponent<TextMeshProUGUI>().text = incomingText;
         } 
@@ -588,8 +600,8 @@ public class PlayerBehaviour : MonoBehaviour
 
     public void Deploy1()
     {
-        deploy1.image.color = Color.grey;
-        deploy2.image.color = Color.white;
+        deploy1.image.color = Color.white;
+        deploy2.image.color = Color.grey;
         deployInt = 0;
         VariabilityHandler handler1 = GameObject.Find(deployInt + "Action").GetComponent<VariabilityHandler>();
         VariabilityHandler handler2 = GameObject.Find(deployInt + "Sensor").GetComponent<VariabilityHandler>();
@@ -616,8 +628,8 @@ public class PlayerBehaviour : MonoBehaviour
 
     public void Deploy2()
     {
-        deploy1.image.color = Color.white;
-        deploy2.image.color = Color.grey;
+        deploy1.image.color = Color.grey;
+        deploy2.image.color = Color.white;
         deployInt = 1;
         VariabilityHandler handler1 = GameObject.Find(deployInt + "Action").GetComponent<VariabilityHandler>();
         VariabilityHandler handler2 = GameObject.Find(deployInt + "Sensor").GetComponent<VariabilityHandler>();
@@ -640,5 +652,11 @@ public class PlayerBehaviour : MonoBehaviour
 
         handler1.SetAllStatesToNormalAndActiveObjectToActive();
         handler2.SetAllStatesToNormalAndActiveObjectToActive();
+    }
+
+    public void RedrawLine()
+    {
+        lineDrawer.GetComponent<LineDrawBehaviour>().DeleteLineAndLinks();
+        lineDrawer.GetComponent<LineDrawBehaviour>().DrawLine(gameObjects[0], gameObjects[1]);
     }
 }

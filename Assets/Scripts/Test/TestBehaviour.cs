@@ -24,6 +24,7 @@ public class TestBehaviour : MonoBehaviour
     GameObject testDialog;
 
     TestObject testObject;
+    List<bool> selectedList = new List<bool>();
 
     bool incomingFunc = false;
     private bool resetAll;
@@ -87,10 +88,15 @@ public class TestBehaviour : MonoBehaviour
 
     public void ResetAll()
     {
+        int index = 0;
         foreach (var button in testButtons)
         {
-            button.SetActive(true);
-            button.GetComponent<Button>().interactable = true;
+            if(selectedList[index] == true)
+            {
+                button.SetActive(true);
+                button.GetComponent<Button>().interactable = true;
+            }
+            index++;
         }
 
         foreach (var cogwheel in cogwheels)
@@ -130,6 +136,16 @@ public class TestBehaviour : MonoBehaviour
             // Handle incoming string
             testObject = JsonConvert.DeserializeObject<TestObject>(data);
             incomingFunc = true;
+
+            if(selectedList?.Count > 0)
+            {
+                selectedList.Clear();
+            }
+
+            selectedList.Add(testObject.HueTest);
+            selectedList.Add(testObject.BriTest);
+            selectedList.Add(testObject.CtTest);
+            selectedList.Add(testObject.OnTest);
         }
         catch (Exception e) 
         {
@@ -149,7 +165,7 @@ public class TestBehaviour : MonoBehaviour
     {
         UnityWebRequest www;
 
-        www = UnityWebRequest.Get("http://192.168.0.246:5000/setEffect");
+        www = UnityWebRequest.Get("http://192.168.0.246:5000/testHue");
 
         yield return www.SendWebRequest();
 
@@ -175,7 +191,7 @@ public class TestBehaviour : MonoBehaviour
     {
         UnityWebRequest www;
 
-        www = UnityWebRequest.Get("http://192.168.0.246:5000/setEffect");
+        www = UnityWebRequest.Get("http://192.168.0.246:5000/testBri");
 
         yield return www.SendWebRequest();
 
@@ -201,7 +217,7 @@ public class TestBehaviour : MonoBehaviour
     {
         UnityWebRequest www;
 
-        www = UnityWebRequest.Get("http://192.168.0.246:5000/setEffect");
+        www = UnityWebRequest.Get("http://192.168.0.246:5000/testCt");
 
         yield return www.SendWebRequest();
 
@@ -221,14 +237,13 @@ public class TestBehaviour : MonoBehaviour
         DisableAllButtons();
         ToggleCoghweel(3, true);
         ToggleTestButton(3, false);
-        ResetAll();
     }
 
     public IEnumerator HttpOnTest()
     {
         UnityWebRequest www;
 
-        www = UnityWebRequest.Get("http://192.168.0.246:5000/setEffect");
+        www = UnityWebRequest.Get("http://192.168.0.246:5000/testSwitch");
 
         yield return www.SendWebRequest();
 

@@ -37,18 +37,22 @@ public class LineDrawBehaviour : MonoBehaviour
     {
         LineRenderer localLine = Instantiate(linePrefab, transform.position, Quaternion.identity);
 
-        localLink = CreateLink(obj1, obj2, 0.4f);
-        localLink2 = CreateLink(obj1, obj2, 0.6f);
+        localLink = CreateLink(obj1, obj2, 0.3f);
+        localLink2 = CreateLink(obj1, obj2, 0.7f);
         localLink2.name = "LinkPrefab2(Clone)";
+
+        localLink.GetComponent<LinkBehaviour>().SetVariables(obj1, obj2, 0.3f);
+        localLink2.GetComponent<LinkBehaviour>().SetVariables(obj1, obj2, 0.7f);
 
         SetActiveStateOfAllLinks(false);
 
         localLine.SetPosition(0, obj1.transform.position);
         localLine.SetPosition(1, localLink.transform.position);
-        localLine.SetPosition(2, obj2.transform.position);
+        localLine.SetPosition(2, localLink2.transform.position);
+        localLine.SetPosition(3, obj2.transform.position);
 
         localLine.transform.position = Vector3.zero;
-        localLine.GetComponent<LineBehaviour>().SetGameObjects(obj1, obj2, localLink);
+        localLine.GetComponent<LineBehaviour>().SetGameObjects(obj1, obj2, localLink, localLink2);
     }
 
     private GameObject CreateLink(GameObject obj1, GameObject obj2, float pos)
@@ -64,5 +68,12 @@ public class LineDrawBehaviour : MonoBehaviour
     {
         localLink.SetActive(state);
         localLink2.SetActive(state);
+    }
+
+    public void DeleteLineAndLinks()
+    {
+        Destroy(GameObject.Find("LinePrefab(Clone)"));
+        Destroy(localLink);
+        Destroy(localLink2);
     }
 }
